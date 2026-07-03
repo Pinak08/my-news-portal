@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Marquee animation for breaking news ticker */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Article body typography */
+.article-body h2 {
+  @apply text-xl font-bold text-gray-900 mt-6 mb-3 font-serif;
+}
+
+.article-body h3 {
+  @apply text-lg font-bold text-gray-900 mt-5 mb-2 font-serif;
+}
+
+.article-body p {
+  @apply text-gray-700 leading-relaxed mb-4;
+}
+
+.article-body ul {
+  @apply list-disc list-inside space-y-1 mb-4 text-gray-700;
+}
+
+.article-body ol {
+  @apply list-decimal list-inside space-y-1 mb-4 text-gray-700;
+}
+
+.article-body blockquote {
+  @apply border-l-4 border-brand-red pl-4 italic text-gray-600 my-4;
+}
+
+.article-body a {
+  @apply text-brand-red hover:underline;
+}
