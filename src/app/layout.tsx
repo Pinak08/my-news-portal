@@ -5,12 +5,12 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: {
-    default: "The Daily Report – Truth. Today. Always.",
-    template: "%s | The Daily Report",
+    default: "TV10 Gujarat – સત્ય. આજે. હંમેશા.",
+    template: "%s | TV10 Gujarat",
   },
-  description: "Bringing you accurate, timely, and unbiased news from Gujarat and across India.",
+  description: "ગુજરાત અને સમગ્ર ભારતના સચોટ, સમયસર અને નિષ્પક્ષ સમાચાર તમારા સુધી પહોંચાડીએ છીએ.",
   openGraph: {
-    siteName: "The Daily Report",
+    siteName: "TV10 Gujarat",
     type: "website",
   },
 };
