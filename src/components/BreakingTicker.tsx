@@ -13,7 +13,7 @@ export default function BreakingTicker({ articles }: { articles: Article[] }) {
     <div className="bg-gray-900 text-white flex items-stretch overflow-hidden">
       <div className="bg-brand-red px-4 py-2 flex items-center flex-shrink-0 z-10">
         <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap">
-          🔴 Breaking
+          🔴 બ્રેકિંગ
         </span>
       </div>
       <div className="overflow-hidden flex-1 relative flex items-center">
