@@ -1,9 +1,6 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { getArticleBySlug, getArticlesByCategory, getAllArticles } from "@/lib/articles";
-import { SmallCard } from "@/components/ArticleCard";
-import SectionHeader from "@/components/SectionHeader";
+import { getArticlesByCategory, getCategoryName, categories } from "@/lib/articles";
+import { ArticleCard, FeaturedCard } from "@/components/ArticleCard";
 import type { Metadata } from "next";
 
 interface Props {
@@ -12,173 +9,64 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
-  if (!article) return {};
+  const name = getCategoryName(slug);
   return {
-    title: article.title,
-    description: article.excerpt,
-    openGraph: {
-      title: article.title,
-      description: article.excerpt,
-      images: [article.imageUrl],
-    },
+    title: `${name} News`,
+    description: `TV10 Gujarat પરથી નવીનતમ ${name} સમાચાર.`,
   };
 }
 
 export async function generateStaticParams() {
-  const articles = getAllArticles();
-  return articles.map((a) => ({ slug: a.slug }));
+  return categories
+    .filter((c) => c.slug !== "/")
+    .map((c) => ({ slug: c.slug }));
 }
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-IN", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-export default async function ArticlePage({ params }: Props) {
+export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
-  if (!article) notFound();
+  const articles = getArticlesByCategory(slug);
+  const categoryName = getCategoryName(slug);
 
-  const related = getArticlesByCategory(article.categorySlug)
-    .filter((a) => a.slug !== article.slug)
-    .slice(0, 4);
+  if (!articles && !categoryName) notFound();
 
-  const whatsappText = encodeURIComponent(`${article.title}\n\nRead more: `);
+  const [featured, ...rest] = articles;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        {/* ─── ARTICLE MAIN ─── */}
-        <article className="lg:col-span-2">
+      {/* Category header */}
+      <div className="border-b-4 border-brand-red pb-3 mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 font-serif">{categoryName}</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          {articles.length} લેખ
+        </p>
+      </div>
 
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <Link href="/" className="hover:text-brand-red transition-colors">હોમ</Link>
-            <span>/</span>
-            <Link href={`/category/${article.categorySlug}`} className="hover:text-brand-red transition-colors">
-              {article.category}
-            </Link>
-          </div>
-
-          {/* Category badge */}
-          <span className="inline-block bg-brand-red text-white text-xs font-bold uppercase tracking-wider px-2 py-1 mb-3">
-            {article.category}
-          </span>
-
-          {/* Title */}
-          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 leading-tight mb-4 font-serif">
-            {article.title}
-          </h1>
-
-          {/* Excerpt */}
-          <p className="text-lg text-gray-600 border-l-4 border-brand-red pl-4 mb-5 italic">
-            {article.excerpt}
-          </p>
-
-          {/* Meta */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-5 pb-4 border-b border-gray-200">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-brand-red flex items-center justify-center text-white text-xs font-bold">
-                {article.author.charAt(0)}
-              </div>
-              <span className="font-semibold text-gray-700">{article.author}</span>
-            </div>
-            <span>·</span>
-            <span>{formatDate(article.publishedAt)}</span>
-          </div>
-
-          {/* Share buttons */}
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-sm font-semibold text-gray-600">શેર કરો:</span>
-            <a
-              href={`https://wa.me/?text=${whatsappText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 bg-green-500 text-white text-sm px-3 py-1.5 rounded hover:bg-green-600 transition-colors font-semibold"
-            >
-              📱 WhatsApp
-            </a>
-            <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 bg-sky-500 text-white text-sm px-3 py-1.5 rounded hover:bg-sky-600 transition-colors font-semibold"
-            >
-              𝕏 Twitter
-            </a>
-            <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://tv10gujarat.in/article/${article.slug}`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 bg-blue-600 text-white text-sm px-3 py-1.5 rounded hover:bg-blue-700 transition-colors font-semibold"
-            >
-              Facebook
-            </a>
-          </div>
-
-          {/* Featured image */}
-          <div className="relative w-full aspect-[16/9] mb-6 overflow-hidden bg-gray-200">
-            <Image
-              src={article.imageUrl}
-              alt={article.title}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-
-          {/* Article body */}
-          <div
-            className="article-body text-gray-800 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: article.content }}
-          />
-
-          {/* Bottom share */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-sm font-semibold text-gray-600 mb-3">શું આ લેખ તમને ઉપયોગી લાગ્યો? શેર કરો:</p>
-            <div className="flex items-center gap-3">
-              <a
-                href={`https://wa.me/?text=${whatsappText}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-600 transition-colors font-semibold"
-              >
-                📱 WhatsApp પર શેર કરો
-              </a>
-            </div>
-          </div>
-
-        </article>
-
-        {/* ─── SIDEBAR ─── */}
-        <aside className="space-y-6">
-
-          {/* Related articles */}
-          {related.length > 0 && (
-            <div className="bg-white p-5 border border-gray-100 shadow-sm">
-              <SectionHeader title="સંબંધિત સમાચાર" />
-              {related.map((a) => (
-                <SmallCard key={a.id} article={a} />
-              ))}
+      {articles.length === 0 ? (
+        <div className="text-center py-20 text-gray-400">
+          <p className="text-2xl mb-2">હજુ કોઈ લેખ નથી</p>
+          <p className="text-sm">નવીનતમ {categoryName} સમાચાર માટે ટૂંક સમયમાં ફરી તપાસો.</p>
+        </div>
+      ) : (
+        <>
+          {/* Featured article */}
+          {featured && (
+            <div className="mb-8">
+              <FeaturedCard article={featured} />
             </div>
           )}
 
-          {/* Ad placeholder */}
-          <div className="bg-gray-200 text-gray-500 text-center py-12 rounded text-sm">
-            જાહેરાત
-          </div>
+          {/* Rest of articles */}
+          {rest.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {rest.map((article) => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
 
-        </aside>
-
-      </div>
     </div>
   );
 }
