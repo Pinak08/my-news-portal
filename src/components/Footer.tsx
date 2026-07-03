@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { categories } from "@/lib/articles";
 
-const SITE_NAME = "The Daily Report";
+const SITE_NAME = "TV10 Gujarat";
 
 export default function Footer() {
   const navCategories = categories.filter((c) => c.slug !== "/");
@@ -15,8 +15,8 @@ export default function Footer() {
           <div>
             <h2 className="text-2xl font-bold text-white font-serif mb-2">{SITE_NAME}</h2>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Bringing you accurate, timely, and unbiased news from Gujarat and across India.
-              Your trusted source for news that matters.
+              ગુજરાત અને સમગ્ર ભારતના સચોટ, સમયસર અને નિષ્પક્ષ સમાચાર તમારા સુધી પહોંચાડીએ છીએ.
+              સમાચાર માટે તમારો વિશ્વસનીય સ્ત્રોત.
             </p>
             <div className="flex gap-4 mt-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Facebook</a>
@@ -28,7 +28,7 @@ export default function Footer() {
 
           {/* Categories */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-4">Sections</h3>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-4">વિભાગો</h3>
             <ul className="grid grid-cols-2 gap-y-2 gap-x-4">
               {navCategories.map((cat) => (
                 <li key={cat.slug}>
@@ -45,24 +45,24 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-4">Contact</h3>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-4">સંપર્ક</h3>
             <ul className="space-y-2 text-sm text-gray-400">
-              <li>📧 news@thedailyreport.in</li>
+              <li>📧 news@tv10gujarat.in</li>
               <li>📞 +91 98765 43210</li>
-              <li>📍 Ahmedabad, Gujarat, India</li>
+              <li>📍 અમદાવાદ, ગુજરાત, ભારત</li>
             </ul>
             <div className="mt-4 flex gap-3">
-              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">About Us</Link>
+              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">અમારા વિશે</Link>
               <span>·</span>
-              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Privacy</Link>
+              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">ગોપનીયતા</Link>
               <span>·</span>
-              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">Contact</Link>
+              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">સંપર્ક કરો</Link>
             </div>
           </div>
         </div>
 
         <div className="border-t border-gray-700 pt-6 text-center text-xs text-gray-500">
-          © {year} {SITE_NAME}. All rights reserved. Built with ❤️ in India.
+          © {year} {SITE_NAME}. તમામ હકો સુરક્ષિત. ભારતમાં ❤️ સાથે બનાવેલ.
         </div>
       </div>
     </footer>
