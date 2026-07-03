@@ -61,7 +61,7 @@ export default async function ArticlePage({ params }: Props) {
 
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <Link href="/" className="hover:text-brand-red transition-colors">Home</Link>
+            <Link href="/" className="hover:text-brand-red transition-colors">હોમ</Link>
             <span>/</span>
             <Link href={`/category/${article.categorySlug}`} className="hover:text-brand-red transition-colors">
               {article.category}
@@ -97,7 +97,7 @@ export default async function ArticlePage({ params }: Props) {
 
           {/* Share buttons */}
           <div className="flex items-center gap-3 mb-6">
-            <span className="text-sm font-semibold text-gray-600">Share:</span>
+            <span className="text-sm font-semibold text-gray-600">શેર કરો:</span>
             <a
               href={`https://wa.me/?text=${whatsappText}`}
               target="_blank"
@@ -115,7 +115,7 @@ export default async function ArticlePage({ params }: Props) {
               𝕏 Twitter
             </a>
             <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://thedailyreport.in/article/${article.slug}`)}`}
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://tv10gujarat.in/article/${article.slug}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 bg-blue-600 text-white text-sm px-3 py-1.5 rounded hover:bg-blue-700 transition-colors font-semibold"
@@ -143,7 +143,7 @@ export default async function ArticlePage({ params }: Props) {
 
           {/* Bottom share */}
           <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-sm font-semibold text-gray-600 mb-3">Did you find this article helpful? Share it:</p>
+            <p className="text-sm font-semibold text-gray-600 mb-3">શું આ લેખ તમને ઉપયોગી લાગ્યો? શેર કરો:</p>
             <div className="flex items-center gap-3">
               <a
                 href={`https://wa.me/?text=${whatsappText}`}
@@ -151,7 +151,7 @@ export default async function ArticlePage({ params }: Props) {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-600 transition-colors font-semibold"
               >
-                📱 Share on WhatsApp
+                📱 WhatsApp પર શેર કરો
               </a>
             </div>
           </div>
@@ -164,7 +164,7 @@ export default async function ArticlePage({ params }: Props) {
           {/* Related articles */}
           {related.length > 0 && (
             <div className="bg-white p-5 border border-gray-100 shadow-sm">
-              <SectionHeader title="Related News" />
+              <SectionHeader title="સંબંધિત સમાચાર" />
               {related.map((a) => (
                 <SmallCard key={a.id} article={a} />
               ))}
@@ -173,7 +173,7 @@ export default async function ArticlePage({ params }: Props) {
 
           {/* Ad placeholder */}
           <div className="bg-gray-200 text-gray-500 text-center py-12 rounded text-sm">
-            Advertisement
+            જાહેરાત
           </div>
 
         </aside>
