@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { categories } from "@/lib/articles";
 
-const SITE_NAME = "The Daily Report";
-const SITE_TAGLINE = "Truth. Today. Always.";
+const SITE_NAME = "TV10 Gujarat";
+const SITE_TAGLINE = "સત્ય. આજે. હંમેશા.";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,11 +48,11 @@ export default function Header() {
           <div className="hidden md:flex items-center border border-gray-300 rounded overflow-hidden">
             <input
               type="text"
-              placeholder="Search news..."
+              placeholder="સમાચાર શોધો..."
               className="px-3 py-1.5 text-sm outline-none w-52"
             />
             <button className="bg-brand-red text-white px-3 py-1.5 text-sm hover:bg-brand-darkred transition-colors">
-              Search
+              શોધો
             </button>
           </div>
 
@@ -60,7 +60,7 @@ export default function Header() {
           <button
             className="md:hidden text-gray-700"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
+            aria-label="મેનૂ ટૉગલ કરો"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {menuOpen ? (
@@ -82,7 +82,7 @@ export default function Header() {
                 href="/"
                 className="block px-4 py-2.5 text-white text-sm font-semibold hover:bg-brand-darkred transition-colors whitespace-nowrap"
               >
-                Home
+                હોમ
               </Link>
             </li>
             {navCategories.map((cat) => (
@@ -105,7 +105,7 @@ export default function Header() {
           <div className="px-4 py-2">
             <input
               type="text"
-              placeholder="Search news..."
+              placeholder="સમાચાર શોધો..."
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none mb-2"
             />
           </div>
@@ -116,7 +116,7 @@ export default function Header() {
                 className="block px-4 py-3 text-sm font-semibold text-gray-800 border-b hover:bg-gray-50"
                 onClick={() => setMenuOpen(false)}
               >
-                Home
+                હોમ
               </Link>
             </li>
             {navCategories.map((cat) => (
