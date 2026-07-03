@@ -14,14 +14,14 @@ export type Article = {
 };
 
 export const categories = [
-  { name: "Home", slug: "/" },
-  { name: "Politics", slug: "politics" },
-  { name: "Business", slug: "business" },
-  { name: "Sports", slug: "sports" },
-  { name: "Entertainment", slug: "entertainment" },
-  { name: "Technology", slug: "technology" },
-  { name: "Lifestyle", slug: "lifestyle" },
-  { name: "Crime", slug: "crime" },
+  { name: "હોમ", slug: "/" },
+  { name: "રાજકારણ", slug: "politics" },
+  { name: "વ્યાપાર", slug: "business" },
+  { name: "રમતગમત", slug: "sports" },
+  { name: "મનોરંજન", slug: "entertainment" },
+  { name: "ટેકનોલોજી", slug: "technology" },
+  { name: "લાઇફસ્ટાઇલ", slug: "lifestyle" },
+  { name: "ક્રાઇમ", slug: "crime" },
 ];
 
 export const articles: Article[] = [
