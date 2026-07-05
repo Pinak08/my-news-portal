@@ -10,13 +10,14 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          red: "#C0392B",
-          darkred: "#96281B",
-          light: "#E74C3C",
+          blue: "#1D4E89",
+          navy: "#0E2A47",
+          sky: "#5B8FC7",
+          mist: "#F4F8FC",
         },
       },
       fontFamily: {
-        serif: ["Georgia", "serif"],
+        serif: ["Playfair Display", "Georgia", "serif"],
         sans: ["Inter", "system-ui", "sans-serif"],
       },
     },
