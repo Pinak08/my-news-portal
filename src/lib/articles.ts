@@ -343,12 +343,14 @@ export async function getAllArticles(): Promise<Article[]> {
     const { data } = await supabasePublic
       .from("articles")
       .select("*")
+      .not("image_url", "is", null)
+      .neq("image_url", "")
       .order("published_at", { ascending: false });
     if (data && data.length > 0) return data.map(mapRow);
   }
-  return [...fallbackArticles].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  );
+  return [...fallbackArticles]
+    .filter((a) => !!a.imageUrl)
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 }
 
 export async function getFeaturedArticle(): Promise<Article> {
@@ -372,8 +374,17 @@ export async function getArticlesByCategory(categorySlug: string): Promise<Artic
 }
 
 export async function getBreakingNews(): Promise<Article[]> {
-  const all = await getAllArticles();
-  return all.filter((a) => a.breaking);
+  // Ticker shows ALL breaking articles — including ticker-only ones with no image.
+  // So we query directly instead of going through getAllArticles() which filters by image.
+  if (isSupabaseConfigured()) {
+    const { data } = await supabasePublic
+      .from("articles")
+      .select("*")
+      .eq("breaking", true)
+      .order("published_at", { ascending: false });
+    if (data && data.length > 0) return data.map(mapRow);
+  }
+  return fallbackArticles.filter((a) => a.breaking);
 }
 
 export async function getLatestArticles(limit = 6): Promise<Article[]> {
