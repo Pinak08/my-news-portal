@@ -8,8 +8,17 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-brand-mist text-gray-900 antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #1D4E89;
+    outline-offset: 2px;
   }
 }
 
@@ -50,9 +59,9 @@
 }
 
 .article-body blockquote {
-  @apply border-l-4 border-brand-red pl-4 italic text-gray-600 my-4;
+  @apply border-l-4 border-brand-blue pl-4 italic text-gray-600 my-4;
 }
 
 .article-body a {
-  @apply text-brand-red hover:underline;
+  @apply text-brand-blue hover:underline;
 }
