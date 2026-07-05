@@ -12,6 +12,12 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: "TV10 Gujarat",
     type: "website",
+    images: ["/logo.jpg"],
+  },
+  icons: {
+    icon: "/logo.jpg",
+    shortcut: "/logo.jpg",
+    apple: "/logo.jpg",
   },
 };
 
