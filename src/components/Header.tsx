@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { categories } from "@/lib/articles";
 
@@ -35,12 +36,22 @@ export default function Header() {
       {/* Main header */}
       <div className="bg-white border-b-2 border-brand-blue py-4 px-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex flex-col">
-            <span className="text-3xl font-bold text-brand-blue tracking-tight font-serif leading-none">
-              {SITE_NAME}
-            </span>
-            <span className="text-xs text-gray-500 tracking-widest uppercase mt-0.5">
-              {SITE_TAGLINE}
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/logo.jpg"
+              alt={SITE_NAME}
+              width={64}
+              height={64}
+              className="h-14 w-14 md:h-16 md:w-16 object-contain rounded"
+              priority
+            />
+            <span className="flex flex-col">
+              <span className="text-3xl font-bold text-brand-blue tracking-tight font-serif leading-none">
+                {SITE_NAME}
+              </span>
+              <span className="text-xs text-gray-500 tracking-widest uppercase mt-0.5">
+                {SITE_TAGLINE}
+              </span>
             </span>
           </Link>
 
