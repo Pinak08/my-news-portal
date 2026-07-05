@@ -47,8 +47,13 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
     e.preventDefault();
     setError("");
 
-    if (!values.title || !values.imageUrl) {
-      setError("Title and a cover image are required.");
+    if (!values.title) {
+      setError("Title is required.");
+      return;
+    }
+
+    if (!values.breaking && !values.imageUrl) {
+      setError("A cover image is required for regular articles.");
       return;
     }
 
@@ -126,7 +131,7 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
       </div>
 
       <CloudinaryUploadButton
-        label="Cover image *"
+        label={values.breaking ? "Cover image (optional for ticker)" : "Cover image *"}
         accept="image"
         currentUrl={values.imageUrl}
         onUploaded={(url) => update("imageUrl", url)}
