@@ -10,8 +10,8 @@ export default function BreakingTicker({ articles }: { articles: Article[] }) {
     .join("     ");
 
   return (
-    <div className="bg-gray-900 text-white flex items-stretch overflow-hidden">
-      <div className="bg-brand-red px-4 py-2 flex items-center flex-shrink-0 z-10">
+    <div className="bg-brand-navy text-white flex items-stretch overflow-hidden">
+      <div className="bg-brand-blue px-4 py-2 flex items-center flex-shrink-0 z-10">
         <span className="text-xs font-bold uppercase tracking-widest whitespace-nowrap">
           🔴 બ્રેકિંગ
         </span>
@@ -22,7 +22,7 @@ export default function BreakingTicker({ articles }: { articles: Article[] }) {
             <span key={i}>
               <Link
                 href={`/article/${a.slug}`}
-                className="hover:text-brand-light transition-colors mr-12"
+                className="hover:text-brand-sky transition-colors mr-12"
               >
                 ● {a.title}
               </Link>
@@ -33,7 +33,7 @@ export default function BreakingTicker({ articles }: { articles: Article[] }) {
             <span key={`dup-${i}`}>
               <Link
                 href={`/article/${a.slug}`}
-                className="hover:text-brand-light transition-colors mr-12"
+                className="hover:text-brand-sky transition-colors mr-12"
               >
                 ● {a.title}
               </Link>
