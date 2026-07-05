@@ -25,6 +25,7 @@ export const categories = [
   { name: "ટેકનોલોજી", slug: "technology" },
   { name: "લાઇફસ્ટાઇલ", slug: "lifestyle" },
   { name: "ક્રાઇમ", slug: "crime" },
+  { name: "આધ્યાત્મિક", slug: "religious" },
 ];
 
 const fallbackArticles: Article[] = [
