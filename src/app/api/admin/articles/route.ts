@@ -45,9 +45,17 @@ export async function POST(req: NextRequest) {
     breaking,
   } = body;
 
-  if (!title || !category || !categorySlug || !imageUrl) {
+  if (!title || !category || !categorySlug) {
     return NextResponse.json(
-      { error: "Title, category, and image are required." },
+      { error: "Title and category are required." },
+      { status: 400 }
+    );
+  }
+
+  // Image is required only for regular articles, not for ticker-only items
+  if (!breaking && !imageUrl) {
+    return NextResponse.json(
+      { error: "A cover image is required for regular articles." },
       { status: 400 }
     );
   }
