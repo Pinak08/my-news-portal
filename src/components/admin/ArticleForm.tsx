@@ -139,7 +139,7 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
         onUploaded={(url) => update("videoUrl", url)}
       />
 
-      <div className="flex items-center gap-6 mb-6 mt-2">
+      <div className="mb-6 mt-2 space-y-3">
         <label className="flex items-center gap-2 text-sm text-gray-700">
           <input
             type="checkbox"
@@ -148,14 +148,27 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
           />
           Featured on homepage
         </label>
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={values.breaking}
-            onChange={(e) => update("breaking", e.target.checked)}
-          />
-          Show in breaking news ticker
-        </label>
+
+        <div>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={values.breaking}
+              onChange={(e) => update("breaking", e.target.checked)}
+            />
+            Show in breaking news ticker
+          </label>
+
+          {values.breaking && (
+            <div className="mt-2 ml-5 flex items-start gap-2 bg-amber-50 border border-amber-300 rounded-md px-3 py-2.5">
+              <span className="text-amber-500 text-base mt-0.5 flex-shrink-0">ℹ️</span>
+              <p className="text-xs text-amber-800 leading-relaxed">
+                <span className="font-semibold block mb-0.5">ટિકરમાં ફક્ત શીર્ષક (Title) જ દેખાય છે.</span>
+                Excerpt, content, image — nothing else appears in the ticker. Only the <strong>Title</strong> field is used. Make sure your title is clear and complete.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
