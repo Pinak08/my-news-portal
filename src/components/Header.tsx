@@ -21,7 +21,7 @@ export default function Header() {
   return (
     <header>
       {/* Top info bar */}
-      <div className="bg-gray-900 text-gray-300 text-xs py-1.5 px-4">
+      <div className="bg-brand-navy text-gray-300 text-xs py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <span>{today}</span>
           <div className="flex items-center gap-4">
@@ -33,10 +33,10 @@ export default function Header() {
       </div>
 
       {/* Main header */}
-      <div className="bg-white border-b-4 border-brand-red py-4 px-4">
+      <div className="bg-white border-b-2 border-brand-blue py-4 px-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex flex-col">
-            <span className="text-3xl font-bold text-brand-red tracking-tight font-serif leading-none">
+            <span className="text-3xl font-bold text-brand-blue tracking-tight font-serif leading-none">
               {SITE_NAME}
             </span>
             <span className="text-xs text-gray-500 tracking-widest uppercase mt-0.5">
@@ -51,7 +51,7 @@ export default function Header() {
               placeholder="સમાચાર શોધો..."
               className="px-3 py-1.5 text-sm outline-none w-52"
             />
-            <button className="bg-brand-red text-white px-3 py-1.5 text-sm hover:bg-brand-darkred transition-colors">
+            <button className="bg-brand-blue text-white px-3 py-1.5 text-sm hover:bg-brand-navy transition-colors">
               શોધો
             </button>
           </div>
@@ -74,13 +74,13 @@ export default function Header() {
       </div>
 
       {/* Navigation bar */}
-      <nav className="bg-brand-red hidden md:block">
+      <nav className="bg-brand-blue hidden md:block">
         <div className="max-w-7xl mx-auto">
           <ul className="flex items-center overflow-x-auto">
             <li>
               <Link
                 href="/"
-                className="block px-4 py-2.5 text-white text-sm font-semibold hover:bg-brand-darkred transition-colors whitespace-nowrap"
+                className="block px-4 py-2.5 text-white text-sm font-semibold hover:bg-brand-navy transition-colors whitespace-nowrap"
               >
                 હોમ
               </Link>
@@ -89,7 +89,7 @@ export default function Header() {
               <li key={cat.slug}>
                 <Link
                   href={`/category/${cat.slug}`}
-                  className="block px-4 py-2.5 text-white text-sm font-semibold hover:bg-brand-darkred transition-colors whitespace-nowrap"
+                  className="block px-4 py-2.5 text-white text-sm font-semibold hover:bg-brand-navy transition-colors whitespace-nowrap"
                 >
                   {cat.name}
                 </Link>
