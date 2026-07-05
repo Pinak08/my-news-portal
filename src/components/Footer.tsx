@@ -48,7 +48,7 @@ export default function Footer() {
             <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-4">સંપર્ક</h3>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>📧 news@tv10gujarat.in</li>
-              <li>📞 +91 98765 43210</li>
+              <li>📞 +91 98256 50103</li>
               <li>📍 અમદાવાદ, ગુજરાત, ભારત</li>
             </ul>
             <div className="mt-4 flex gap-3">
