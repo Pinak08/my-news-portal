@@ -1,3 +1,5 @@
+import { supabasePublic } from "@/lib/supabase";
+
 export type Article = {
   id: number;
   slug: string;
@@ -9,6 +11,7 @@ export type Article = {
   author: string;
   publishedAt: string;
   imageUrl: string;
+  videoUrl?: string;
   featured: boolean;
   breaking: boolean;
 };
@@ -24,7 +27,7 @@ export const categories = [
   { name: "ક્રાઇમ", slug: "crime" },
 ];
 
-export const articles: Article[] = [
+const fallbackArticles: Article[] = [
   {
     id: 1,
     slug: "gujarat-infrastructure-development-highway-project",
@@ -308,32 +311,74 @@ export const articles: Article[] = [
   },
 ];
 
-export function getAllArticles(): Article[] {
-  return articles.sort(
+function isSupabaseConfigured() {
+  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
+
+function mapRow(row: Record<string, unknown>): Article {
+  return {
+    id: row.id as number,
+    slug: row.slug as string,
+    title: row.title as string,
+    excerpt: row.excerpt as string,
+    content: row.content as string,
+    category: row.category as string,
+    categorySlug: row.category_slug as string,
+    author: row.author as string,
+    publishedAt: row.published_at as string,
+    imageUrl: row.image_url as string,
+    videoUrl: (row.video_url as string) || undefined,
+    featured: row.featured as boolean,
+    breaking: row.breaking as boolean,
+  };
+}
+
+// All the functions below try Supabase first (this is where articles your
+// uncle publishes through /admin actually live). If Supabase isn't set up
+// yet (no env vars) or the table is empty, they fall back to the sample
+// articles above so the site still works out of the box.
+
+export async function getAllArticles(): Promise<Article[]> {
+  if (isSupabaseConfigured()) {
+    const { data } = await supabasePublic
+      .from("articles")
+      .select("*")
+      .order("published_at", { ascending: false });
+    if (data && data.length > 0) return data.map(mapRow);
+  }
+  return [...fallbackArticles].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 }
 
-export function getFeaturedArticle(): Article {
-  return articles.find((a) => a.featured) || articles[0];
+export async function getFeaturedArticle(): Promise<Article> {
+  const all = await getAllArticles();
+  return all.find((a) => a.featured) || all[0];
 }
 
-export function getArticleBySlug(slug: string): Article | undefined {
-  return articles.find((a) => a.slug === slug);
+export async function getArticleBySlug(slug: string): Promise<Article | undefined> {
+  if (isSupabaseConfigured()) {
+    const { data } = await supabasePublic.from("articles").select("*").eq("slug", slug).single();
+    if (data) return mapRow(data);
+  }
+  return fallbackArticles.find((a) => a.slug === slug);
 }
 
-export function getArticlesByCategory(categorySlug: string): Article[] {
-  return articles
+export async function getArticlesByCategory(categorySlug: string): Promise<Article[]> {
+  const all = await getAllArticles();
+  return all
     .filter((a) => a.categorySlug === categorySlug)
     .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 }
 
-export function getBreakingNews(): Article[] {
-  return articles.filter((a) => a.breaking);
+export async function getBreakingNews(): Promise<Article[]> {
+  const all = await getAllArticles();
+  return all.filter((a) => a.breaking);
 }
 
-export function getLatestArticles(limit = 6): Article[] {
-  return getAllArticles().slice(0, limit);
+export async function getLatestArticles(limit = 6): Promise<Article[]> {
+  const all = await getAllArticles();
+  return all.slice(0, limit);
 }
 
 export function getCategoryName(slug: string): string {
