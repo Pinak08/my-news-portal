@@ -56,7 +56,10 @@ export default async function ArticlePage({ params }: Props) {
 
   const reactionCounts = await getReactionCounts(article.id);
 
-  const whatsappText = encodeURIComponent(`${article.title}\n\nRead more: `);
+  const articleUrl = `https://tv10gujarat.in/article/${article.slug}`;
+  const whatsappText = encodeURIComponent(`${article.title}\n\n${articleUrl}`);
+  const twitterText = encodeURIComponent(article.title);
+  const encodedArticleUrl = encodeURIComponent(articleUrl);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
@@ -113,7 +116,7 @@ export default async function ArticlePage({ params }: Props) {
               📱 WhatsApp
             </a>
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}`}
+              href={`https://twitter.com/intent/tweet?text=${twitterText}&url=${encodedArticleUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 bg-sky-500 text-white text-sm px-3 py-1.5 rounded hover:bg-sky-600 transition-colors font-semibold"
@@ -121,7 +124,7 @@ export default async function ArticlePage({ params }: Props) {
               𝕏 Twitter
             </a>
             <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://tv10gujarat.in/article/${article.slug}`)}`}
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodedArticleUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 bg-blue-600 text-white text-sm px-3 py-1.5 rounded hover:bg-blue-700 transition-colors font-semibold"
