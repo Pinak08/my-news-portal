@@ -5,7 +5,6 @@ import { useState } from "react";
 import { categories } from "@/lib/articles";
 
 const SITE_NAME = "TV10 Gujarat";
-const SITE_TAGLINE = "સત્ય. આજે. હંમેશા.";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,9 +47,6 @@ export default function Header() {
             <span className="flex flex-col">
               <span className="text-3xl font-bold text-brand-blue tracking-tight font-serif leading-none">
                 {SITE_NAME}
-              </span>
-              <span className="text-xs text-gray-500 tracking-widest uppercase mt-0.5">
-                {SITE_TAGLINE}
               </span>
             </span>
           </Link>
