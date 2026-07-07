@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import CloudinaryUploadButton from "@/components/CloudinaryUploadButton";
+import CloudinaryMultiUploadButton from "@/components/CloudinaryMultiUploadButton";
 import { categories } from "@/lib/articles";
 
 export interface ArticleFormValues {
@@ -12,13 +12,14 @@ export interface ArticleFormValues {
   category: string;
   categorySlug: string;
   author: string;
-  imageUrl: string;
-  videoUrl: string;
+  imageUrls: string[];
+  videoUrls: string[];
   featured: boolean;
   breaking: boolean;
 }
 
 const navCategories = categories.filter((c) => c.slug !== "/");
+const MAX_MEDIA = 3;
 
 export default function ArticleForm({ initial }: { initial?: ArticleFormValues }) {
   const router = useRouter();
@@ -30,8 +31,8 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
       category: navCategories[0].name,
       categorySlug: navCategories[0].slug,
       author: "",
-      imageUrl: "",
-      videoUrl: "",
+      imageUrls: [],
+      videoUrls: [],
       featured: false,
       breaking: false,
     }
@@ -52,17 +53,25 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
       return;
     }
 
-    if (!values.breaking && !values.imageUrl) {
-      setError("A cover image is required for regular articles.");
+    if (!values.breaking && values.imageUrls.length === 0) {
+      setError("At least one cover image is required for regular articles.");
       return;
     }
 
     setSaving(true);
     const isEdit = !!values.id;
+    // imageUrl / videoUrl are sent alongside the arrays for backward
+    // compatibility with anything still reading the single-URL columns
+    // (article cards, homepage, WhatsApp/social share previews).
+    const payload = {
+      ...values,
+      imageUrl: values.imageUrls[0] || "",
+      videoUrl: values.videoUrls[0] || "",
+    };
     const res = await fetch(isEdit ? `/api/admin/articles/${values.id}` : "/api/admin/articles", {
       method: isEdit ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
+      body: JSON.stringify(payload),
     });
     setSaving(false);
 
@@ -130,18 +139,20 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
         </div>
       </div>
 
-      <CloudinaryUploadButton
-        label={values.breaking ? "Cover image (optional for ticker)" : "Cover image *"}
+      <CloudinaryMultiUploadButton
+        label={values.breaking ? "Images (optional for ticker, up to 3)" : "Images * (up to 3)"}
         accept="image"
-        currentUrl={values.imageUrl}
-        onUploaded={(url) => update("imageUrl", url)}
+        urls={values.imageUrls}
+        onChange={(urls) => update("imageUrls", urls)}
+        max={MAX_MEDIA}
       />
 
-      <CloudinaryUploadButton
-        label="Video (optional)"
+      <CloudinaryMultiUploadButton
+        label="Videos (optional, up to 3)"
         accept="video"
-        currentUrl={values.videoUrl}
-        onUploaded={(url) => update("videoUrl", url)}
+        urls={values.videoUrls}
+        onChange={(urls) => update("videoUrls", urls)}
+        max={MAX_MEDIA}
       />
 
       <div className="mb-6 mt-2 space-y-3">
