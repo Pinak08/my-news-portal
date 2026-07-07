@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { categories } from "@/lib/articles";
+import SocialIcons from "@/components/SocialIcons";
 
 const SITE_NAME = "TV10 Gujarat";
 
@@ -24,11 +25,7 @@ export default function Header() {
       <div className="bg-brand-navy text-gray-300 text-xs py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <span>{today}</span>
-          <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-white transition-colors">Facebook</a>
-            <a href="#" className="hover:text-white transition-colors">Twitter/X</a>
-            <a href="#" className="hover:text-white transition-colors">YouTube</a>
-          </div>
+          <SocialIcons iconClassName="w-4 h-4 text-gray-300" />
         </div>
       </div>
 
