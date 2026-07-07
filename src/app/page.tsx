@@ -1,7 +1,9 @@
 import { getFeaturedArticle, getLatestArticles, getArticlesByCategory, getBreakingNews } from "@/lib/articles";
+import { getRandomActiveAd } from "@/lib/ads";
 import { FeaturedCard, ArticleCard, SmallCard } from "@/components/ArticleCard";
 import BreakingTicker from "@/components/BreakingTicker";
 import SectionHeader from "@/components/SectionHeader";
+import AdBanner from "@/components/AdBanner";
 
 export const revalidate = 60; // refresh homepage from the database every 60 seconds
 
@@ -13,6 +15,7 @@ export default async function HomePage() {
   const business = (await getArticlesByCategory("business")).slice(0, 4);
   const sports = (await getArticlesByCategory("sports")).slice(0, 3);
   const entertainment = (await getArticlesByCategory("entertainment")).slice(0, 3);
+  const ad = await getRandomActiveAd();
 
   // Latest articles excluding featured
   const latestExFeatured = latest.filter((a) => a.slug !== featured.slug).slice(0, 5);
@@ -132,9 +135,15 @@ export default async function HomePage() {
           </div>
         )}
 
-        {/* ─── AD PLACEHOLDER ─── */}
-        <div className="bg-gray-200 text-gray-500 text-center py-6 rounded text-sm mb-10">
-          જાહેરાત સ્થળ
+        {/* ─── AD SLOT ─── */}
+        <div className="mb-10">
+          {ad ? (
+            <AdBanner ad={ad} />
+          ) : (
+            <div className="bg-gray-200 text-gray-500 text-center py-6 rounded text-sm">
+              જાહેરાત સ્થળ
+            </div>
+          )}
         </div>
 
       </div>
