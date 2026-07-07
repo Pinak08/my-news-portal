@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import ArticleMedia from "@/components/ArticleMedia";
+import ArticleReactions from "@/components/ArticleReactions";
+import { getReactionCounts } from "@/lib/reactions";
 import Link from "next/link";
 import { getArticleBySlug, getArticlesByCategory, getAllArticles } from "@/lib/articles";
 import { SmallCard } from "@/components/ArticleCard";
@@ -51,6 +53,8 @@ export default async function ArticlePage({ params }: Props) {
   const related = (await getArticlesByCategory(article.categorySlug))
     .filter((a) => a.slug !== article.slug)
     .slice(0, 4);
+
+  const reactionCounts = await getReactionCounts(article.id);
 
   const whatsappText = encodeURIComponent(`${article.title}\n\nRead more: `);
 
@@ -138,6 +142,16 @@ export default async function ArticlePage({ params }: Props) {
             className="article-body text-gray-800 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
+
+          {/* Like / Dislike */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <p className="text-sm font-semibold text-gray-600 mb-3">આ લેખ કેવો લાગ્યો?</p>
+            <ArticleReactions
+              articleId={article.id}
+              initialLikes={reactionCounts.likes}
+              initialDislikes={reactionCounts.dislikes}
+            />
+          </div>
 
           {/* Bottom share */}
           <div className="mt-8 pt-6 border-t border-gray-200">
