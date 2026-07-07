@@ -420,6 +420,41 @@ export async function getLatestArticles(limit = 6): Promise<Article[]> {
   return all.slice(0, limit);
 }
 
+export async function searchArticles(query: string): Promise<Article[]> {
+  const q = query.trim();
+  if (!q) return [];
+
+  if (isSupabaseConfigured()) {
+    // Comma/parentheses have special meaning in PostgREST's .or() filter
+    // syntax, so strip them out of the search term before building the
+    // pattern (this is just for full-text-ish matching, not SQL — no
+    // injection risk either way since values go through PostgREST's own
+    // parameterized filter parser, not raw SQL).
+    const safeQ = q.replace(/[,()]/g, " ").trim();
+    if (!safeQ) return [];
+    const { data } = await supabasePublic
+      .from("articles")
+      .select("*")
+      .not("image_url", "is", null)
+      .neq("image_url", "")
+      .or(`title.ilike.%${safeQ}%,excerpt.ilike.%${safeQ}%,content.ilike.%${safeQ}%`)
+      .order("published_at", { ascending: false });
+    if (data) return data.map(mapRow);
+    return [];
+  }
+
+  const lower = q.toLowerCase();
+  return fallbackArticles
+    .filter((a) => !!a.imageUrl)
+    .filter(
+      (a) =>
+        a.title.toLowerCase().includes(lower) ||
+        a.excerpt.toLowerCase().includes(lower) ||
+        a.content.toLowerCase().includes(lower)
+    )
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+}
+
 export function getCategoryName(slug: string): string {
   const cat = categories.find((c) => c.slug === slug);
   return cat ? cat.name : slug;
