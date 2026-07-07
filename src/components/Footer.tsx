@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { categories } from "@/lib/articles";
+import SocialIcons from "@/components/SocialIcons";
 
 const SITE_NAME = "TV10 Gujarat";
 
@@ -18,12 +19,7 @@ export default function Footer() {
               ગુજરાત અને સમગ્ર ભારતના સચોટ, સમયસર અને નિષ્પક્ષ સમાચાર તમારા સુધી પહોંચાડીએ છીએ.
               સમાચાર માટે તમારો વિશ્વસનીય સ્ત્રોત.
             </p>
-            <div className="flex gap-4 mt-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Facebook</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Twitter/X</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">YouTube</a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Instagram</a>
-            </div>
+            <SocialIcons className="mt-4" iconClassName="w-6 h-6 text-gray-300" />
           </div>
 
           {/* Categories */}
