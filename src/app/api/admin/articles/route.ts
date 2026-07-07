@@ -41,9 +41,20 @@ export async function POST(req: NextRequest) {
     author,
     imageUrl,
     videoUrl,
+    imageUrls,
+    videoUrls,
     featured,
     breaking,
   } = body;
+
+  // Support both the new arrays and the older single-URL fields, in case
+  // something still only sends imageUrl/videoUrl.
+  const finalImageUrls: string[] = (Array.isArray(imageUrls) ? imageUrls : imageUrl ? [imageUrl] : [])
+    .filter(Boolean)
+    .slice(0, 3);
+  const finalVideoUrls: string[] = (Array.isArray(videoUrls) ? videoUrls : videoUrl ? [videoUrl] : [])
+    .filter(Boolean)
+    .slice(0, 3);
 
   if (!title || !category || !categorySlug) {
     return NextResponse.json(
@@ -52,10 +63,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Image is required only for regular articles, not for ticker-only items
-  if (!breaking && !imageUrl) {
+  // At least one image is required only for regular articles, not for ticker-only items
+  if (!breaking && finalImageUrls.length === 0) {
     return NextResponse.json(
-      { error: "A cover image is required for regular articles." },
+      { error: "At least one cover image is required for regular articles." },
       { status: 400 }
     );
   }
@@ -73,8 +84,12 @@ export async function POST(req: NextRequest) {
       category,
       category_slug: categorySlug,
       author: author || "",
-      image_url: imageUrl,
-      video_url: videoUrl || null,
+      // image_url/video_url mirror the first item for backward compatibility
+      // with cards, homepage, and social share previews that only read one.
+      image_url: finalImageUrls[0] || "",
+      video_url: finalVideoUrls[0] || null,
+      image_urls: finalImageUrls,
+      video_urls: finalVideoUrls,
       featured: !!featured,
       breaking: !!breaking,
       published_at: new Date().toISOString(),
