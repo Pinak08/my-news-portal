@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
+import ArticleMedia from "@/components/ArticleMedia";
 import Link from "next/link";
 import { getArticleBySlug, getArticlesByCategory, getAllArticles } from "@/lib/articles";
 import { SmallCard } from "@/components/ArticleCard";
@@ -126,25 +126,12 @@ export default async function ArticlePage({ params }: Props) {
             </a>
           </div>
 
-          {/* Featured image or video */}
-          <div className="relative w-full aspect-[16/9] mb-6 overflow-hidden bg-gray-200">
-            {article.videoUrl ? (
-              <video
-                src={article.videoUrl}
-                poster={article.imageUrl}
-                controls
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <Image
-                src={article.imageUrl}
-                alt={article.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            )}
-          </div>
+          {/* Images and videos, shown as separate sections */}
+          <ArticleMedia
+            title={article.title}
+            imageUrls={article.imageUrls.length > 0 ? article.imageUrls : article.imageUrl ? [article.imageUrl] : []}
+            videoUrls={article.videoUrls}
+          />
 
           {/* Article body */}
           <div
