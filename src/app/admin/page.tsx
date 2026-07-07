@@ -18,6 +18,12 @@ export default async function AdminDashboard() {
         <h1 className="text-2xl font-bold text-brand-navy font-serif">TV10 Gujarat — Admin</h1>
         <div className="flex items-center gap-3">
           <Link
+            href="/admin/ads"
+            className="bg-white border border-brand-blue text-brand-blue px-4 py-2 rounded font-semibold hover:bg-brand-mist transition-colors text-sm"
+          >
+            જાહેરાત મેનેજ કરો
+          </Link>
+          <Link
             href="/admin/new"
             className="bg-brand-blue text-white px-4 py-2 rounded font-semibold hover:bg-brand-navy transition-colors text-sm"
           >
