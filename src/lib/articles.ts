@@ -10,8 +10,10 @@ export type Article = {
   categorySlug: string;
   author: string;
   publishedAt: string;
-  imageUrl: string;
-  videoUrl?: string;
+  imageUrl: string; // cover image, always = imageUrls[0], used by cards/homepage/share previews
+  videoUrl?: string; // always = videoUrls[0], kept for backward compatibility
+  imageUrls: string[]; // up to 3 images
+  videoUrls: string[]; // up to 3 videos
   featured: boolean;
   breaking: boolean;
 };
@@ -28,7 +30,9 @@ export const categories = [
   { name: "આધ્યાત્મિક", slug: "religious" },
 ];
 
-const fallbackArticles: Article[] = [
+type FallbackArticle = Omit<Article, "imageUrls" | "videoUrls">;
+
+const rawFallbackArticles: FallbackArticle[] = [
   {
     id: 1,
     slug: "gujarat-infrastructure-development-highway-project",
@@ -312,11 +316,32 @@ const fallbackArticles: Article[] = [
   },
 ];
 
+const fallbackArticles: Article[] = rawFallbackArticles.map((a) => ({
+  ...a,
+  imageUrls: a.imageUrl ? [a.imageUrl] : [],
+  videoUrls: a.videoUrl ? [a.videoUrl] : [],
+}));
+
 function isSupabaseConfigured() {
   return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
 function mapRow(row: Record<string, unknown>): Article {
+  const rawImageUrls = row.image_urls;
+  const rawVideoUrls = row.video_urls;
+  const imageUrls: string[] =
+    Array.isArray(rawImageUrls) && rawImageUrls.length > 0
+      ? (rawImageUrls as string[])
+      : row.image_url
+      ? [row.image_url as string]
+      : [];
+  const videoUrls: string[] =
+    Array.isArray(rawVideoUrls) && rawVideoUrls.length > 0
+      ? (rawVideoUrls as string[])
+      : row.video_url
+      ? [row.video_url as string]
+      : [];
+
   return {
     id: row.id as number,
     slug: row.slug as string,
@@ -327,8 +352,10 @@ function mapRow(row: Record<string, unknown>): Article {
     categorySlug: row.category_slug as string,
     author: row.author as string,
     publishedAt: row.published_at as string,
-    imageUrl: row.image_url as string,
-    videoUrl: (row.video_url as string) || undefined,
+    imageUrl: (row.image_url as string) || imageUrls[0] || "",
+    videoUrl: (row.video_url as string) || videoUrls[0] || undefined,
+    imageUrls,
+    videoUrls,
     featured: row.featured as boolean,
     breaking: row.breaking as boolean,
   };
