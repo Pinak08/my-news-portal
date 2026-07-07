@@ -29,8 +29,20 @@ export default async function EditArticlePage({ params }: Props) {
           category: data.category,
           categorySlug: data.category_slug,
           author: data.author,
-          imageUrl: data.image_url,
-          videoUrl: data.video_url || "",
+          // Fall back to the legacy single image_url/video_url columns for
+          // articles saved before multi-upload existed.
+          imageUrls:
+            Array.isArray(data.image_urls) && data.image_urls.length > 0
+              ? data.image_urls
+              : data.image_url
+              ? [data.image_url]
+              : [],
+          videoUrls:
+            Array.isArray(data.video_urls) && data.video_urls.length > 0
+              ? data.video_urls
+              : data.video_url
+              ? [data.video_url]
+              : [],
           featured: data.featured,
           breaking: data.breaking,
         }}
