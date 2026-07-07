@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import ArticleMedia from "@/components/ArticleMedia";
 import ArticleReactions from "@/components/ArticleReactions";
 import { getReactionCounts } from "@/lib/reactions";
+import { getRandomActiveAd } from "@/lib/ads";
+import AdBanner from "@/components/AdBanner";
 import Link from "next/link";
 import { getArticleBySlug, getArticlesByCategory, getAllArticles } from "@/lib/articles";
 import { SmallCard } from "@/components/ArticleCard";
@@ -55,6 +57,7 @@ export default async function ArticlePage({ params }: Props) {
     .slice(0, 4);
 
   const reactionCounts = await getReactionCounts(article.id);
+  const ad = await getRandomActiveAd();
 
   // Falls back to your current Vercel URL if NEXT_PUBLIC_SITE_URL isn't set.
   // Once tv10gujarat.in (or any custom domain) is pointed at this project,
@@ -191,10 +194,14 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           )}
 
-          {/* Ad placeholder */}
-          <div className="bg-gray-200 text-gray-500 text-center py-12 rounded text-sm">
-            જાહેરાત
-          </div>
+          {/* Advertisement */}
+          {ad ? (
+            <AdBanner ad={ad} />
+          ) : (
+            <div className="bg-gray-200 text-gray-500 text-center py-12 rounded text-sm">
+              જાહેરાત
+            </div>
+          )}
 
         </aside>
 
