@@ -56,7 +56,12 @@ export default async function ArticlePage({ params }: Props) {
 
   const reactionCounts = await getReactionCounts(article.id);
 
-  const articleUrl = `https://tv10gujarat.in/article/${article.slug}`;
+  // Falls back to your current Vercel URL if NEXT_PUBLIC_SITE_URL isn't set.
+  // Once tv10gujarat.in (or any custom domain) is pointed at this project,
+  // just set NEXT_PUBLIC_SITE_URL in Vercel's project settings and every
+  // share link will use that instead — no code change needed.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://my-news-portal-gules.vercel.app";
+  const articleUrl = `${siteUrl}/article/${article.slug}`;
   const whatsappText = encodeURIComponent(`${article.title}\n\n${articleUrl}`);
   const twitterText = encodeURIComponent(article.title);
   const encodedArticleUrl = encodeURIComponent(articleUrl);
