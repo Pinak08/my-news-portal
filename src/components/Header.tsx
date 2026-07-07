@@ -56,16 +56,24 @@ export default function Header() {
           </Link>
 
           {/* Desktop search */}
-          <div className="hidden md:flex items-center border border-gray-300 rounded overflow-hidden">
+          <form
+            action="/search"
+            method="GET"
+            className="hidden md:flex items-center border border-gray-300 rounded overflow-hidden"
+          >
             <input
               type="text"
+              name="q"
               placeholder="સમાચાર શોધો..."
               className="px-3 py-1.5 text-sm outline-none w-52"
             />
-            <button className="bg-brand-blue text-white px-3 py-1.5 text-sm hover:bg-brand-navy transition-colors">
+            <button
+              type="submit"
+              className="bg-brand-blue text-white px-3 py-1.5 text-sm hover:bg-brand-navy transition-colors"
+            >
               શોધો
             </button>
-          </div>
+          </form>
 
           {/* Hamburger for mobile */}
           <button
@@ -114,11 +122,21 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden bg-white border-b shadow-lg">
           <div className="px-4 py-2">
-            <input
-              type="text"
-              placeholder="સમાચાર શોધો..."
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none mb-2"
-            />
+            <form action="/search" method="GET" className="flex gap-2">
+              <input
+                type="text"
+                name="q"
+                placeholder="સમાચાર શોધો..."
+                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm outline-none"
+              />
+              <button
+                type="submit"
+                className="bg-brand-blue text-white px-4 py-2 rounded text-sm font-semibold hover:bg-brand-navy transition-colors"
+                onClick={() => setMenuOpen(false)}
+              >
+                શોધો
+              </button>
+            </form>
           </div>
           <ul>
             <li>
