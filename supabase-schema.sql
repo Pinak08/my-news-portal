@@ -61,3 +61,26 @@ create index if not exists article_reactions_article_id_idx on article_reactions
 -- our own /api/articles/[id]/reactions route, which uses the service role
 -- key on the server and validates the reaction value itself.
 alter table article_reactions enable row level security;
+
+-- ─── Advertisements ("જાહેરાત") ───
+-- Every field is optional on purpose — the admin can publish an ad with just
+-- a title, just an image, just a video, just text, or any mix, so this
+-- doesn't force any single field to be filled in the app layer either.
+create table if not exists advertisements (
+  id bigint generated always as identity primary key,
+  title text,
+  image_url text,
+  video_url text,
+  body_text text,
+  link_url text, -- optional: where the ad takes people when clicked
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table advertisements enable row level security;
+
+-- Public site only ever needs to read ads that are turned on; all writes go
+-- through /api/admin/ads using the service role key (same pattern as articles).
+create policy "Public can read active ads"
+  on advertisements for select
+  using (active = true);
