@@ -35,3 +35,29 @@ alter table articles enable row level security;
 create policy "Public can read articles"
   on articles for select
   using (true);
+
+-- ─── Likes / Dislikes ───
+-- One row per (article, visitor). visitor_id is a random ID generated in the
+-- visitor's browser (stored in localStorage) — there's no login system on
+-- the public site, so this is what lets someone change/undo their own vote
+-- and stops a single page reload from double-counting, without requiring
+-- accounts. It's not bulletproof against someone clearing localStorage to
+-- vote again, but it's the standard lightweight approach for a site like
+-- this with no user accounts.
+create table if not exists article_reactions (
+  id bigint generated always as identity primary key,
+  article_id bigint not null references articles(id) on delete cascade,
+  visitor_id text not null,
+  reaction text not null check (reaction in ('like', 'dislike')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (article_id, visitor_id)
+);
+
+create index if not exists article_reactions_article_id_idx on article_reactions (article_id);
+
+-- Locked down: no RLS policies at all, so the anon key (used by the public
+-- site directly) cannot read or write this table. All access goes through
+-- our own /api/articles/[id]/reactions route, which uses the service role
+-- key on the server and validates the reaction value itself.
+alter table article_reactions enable row level security;
