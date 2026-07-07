@@ -13,6 +13,15 @@ export async function PUT(
   const { id } = await params;
   const body = await req.json();
 
+  // Support both the new arrays and the older single-URL fields, in case
+  // something still only sends imageUrl/videoUrl.
+  const finalImageUrls: string[] = (Array.isArray(body.imageUrls) ? body.imageUrls : body.imageUrl ? [body.imageUrl] : [])
+    .filter(Boolean)
+    .slice(0, 3);
+  const finalVideoUrls: string[] = (Array.isArray(body.videoUrls) ? body.videoUrls : body.videoUrl ? [body.videoUrl] : [])
+    .filter(Boolean)
+    .slice(0, 3);
+
   const supabase = supabaseAdmin();
   const { data, error } = await supabase
     .from("articles")
@@ -23,8 +32,12 @@ export async function PUT(
       category: body.category,
       category_slug: body.categorySlug,
       author: body.author,
-      image_url: body.imageUrl,
-      video_url: body.videoUrl || null,
+      // image_url/video_url mirror the first item for backward compatibility
+      // with cards, homepage, and social share previews that only read one.
+      image_url: finalImageUrls[0] || "",
+      video_url: finalVideoUrls[0] || null,
+      image_urls: finalImageUrls,
+      video_urls: finalVideoUrls,
       featured: !!body.featured,
       breaking: !!body.breaking,
     })
