@@ -45,7 +45,7 @@ function formatDate(dateStr: string) {
   });
 }
 
-export const revalidate = 60;
+export const revalidate = 14400; // background: rebuild every 4 hrs | instant: triggered on publish/edit/delete
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
