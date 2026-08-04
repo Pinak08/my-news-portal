@@ -5,7 +5,7 @@ import BreakingTicker from "@/components/BreakingTicker";
 import SectionHeader from "@/components/SectionHeader";
 import AdBanner from "@/components/AdBanner";
 
-export const revalidate = 60; // refresh homepage from the database every 60 seconds
+export const revalidate = 14400; // background: rebuild every 4 hrs | instant: triggered on publish/edit/delete
 
 export default async function HomePage() {
   const featured = await getFeaturedArticle();
