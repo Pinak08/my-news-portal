@@ -30,7 +30,7 @@
 
 .animate-marquee {
   display: inline-block;
-  animation: marquee 35s linear infinite;
+  animation: marquee 90s linear infinite;
 }
 
 .animate-marquee:hover {
