@@ -22,7 +22,7 @@ export async function generateStaticParams() {
     .map((c) => ({ slug: c.slug }));
 }
 
-export const revalidate = 14400; // background: rebuild every 4 hrs | instant: triggered on publish/edit/delete
+export const revalidate = 86400; // 24 hrs safety net — instant rebuild on publish/edit/delete
 
 export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
