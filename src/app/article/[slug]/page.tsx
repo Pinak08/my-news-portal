@@ -45,7 +45,7 @@ function formatDate(dateStr: string) {
   });
 }
 
-export const revalidate = 14400; // background: rebuild every 4 hrs | instant: triggered on publish/edit/delete
+export const revalidate = 86400; // 24 hrs safety net — instant rebuild on publish/edit/delete
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
