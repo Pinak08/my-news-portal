@@ -5,7 +5,7 @@ import BreakingTicker from "@/components/BreakingTicker";
 import SectionHeader from "@/components/SectionHeader";
 import AdBanner from "@/components/AdBanner";
 
-export const revalidate = 14400; // background: rebuild every 4 hrs | instant: triggered on publish/edit/delete
+export const revalidate = 86400; // 24 hrs safety net — instant rebuild on publish/edit/delete
 
 export default async function HomePage() {
   const featured = await getFeaturedArticle();
