@@ -145,7 +145,7 @@ export default async function ArticlePage({ params }: Props) {
           <ArticleMedia
             title={article.title}
             imageUrls={article.imageUrls.length > 0 ? article.imageUrls : article.imageUrl ? [article.imageUrl] : []}
-            videoUrls={article.videoUrls}
+            youtubeUrl={article.videoUrl || undefined}
           />
 
           {/* Article body */}
