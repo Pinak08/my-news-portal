@@ -37,12 +37,7 @@ export default async function EditArticlePage({ params }: Props) {
               : data.image_url
               ? [data.image_url]
               : [],
-          videoUrls:
-            Array.isArray(data.video_urls) && data.video_urls.length > 0
-              ? data.video_urls
-              : data.video_url
-              ? [data.video_url]
-              : [],
+          youtubeUrl: data.video_url || "",
           featured: data.featured,
           breaking: data.breaking,
         }}
