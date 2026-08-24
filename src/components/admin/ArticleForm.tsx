@@ -13,13 +13,25 @@ export interface ArticleFormValues {
   categorySlug: string;
   author: string;
   imageUrls: string[];
-  videoUrls: string[];
+  youtubeUrl: string;
   featured: boolean;
   breaking: boolean;
 }
 
 const navCategories = categories.filter((c) => c.slug !== "/");
-const MAX_MEDIA = 3;
+const MAX_IMAGES = 3;
+
+function extractYouTubeId(url: string): string | null {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
 
 export default function ArticleForm({ initial }: { initial?: ArticleFormValues }) {
   const router = useRouter();
@@ -32,7 +44,7 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
       categorySlug: navCategories[0].slug,
       author: "",
       imageUrls: [],
-      videoUrls: [],
+      youtubeUrl: "",
       featured: false,
       breaking: false,
     }
@@ -58,15 +70,20 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
       return;
     }
 
+    // Validate YouTube URL if provided
+    if (values.youtubeUrl && !extractYouTubeId(values.youtubeUrl)) {
+      setError("Please enter a valid YouTube video URL (e.g. https://www.youtube.com/watch?v=...)");
+      return;
+    }
+
     setSaving(true);
     const isEdit = !!values.id;
-    // imageUrl / videoUrl are sent alongside the arrays for backward
-    // compatibility with anything still reading the single-URL columns
-    // (article cards, homepage, WhatsApp/social share previews).
     const payload = {
       ...values,
       imageUrl: values.imageUrls[0] || "",
-      videoUrl: values.videoUrls[0] || "",
+      videoUrl: values.youtubeUrl || "",
+      imageUrls: values.imageUrls,
+      videoUrls: [],
     };
     const res = await fetch(isEdit ? `/api/admin/articles/${values.id}` : "/api/admin/articles", {
       method: isEdit ? "PUT" : "POST",
@@ -83,6 +100,8 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
       setError(data.error || "Something went wrong");
     }
   }
+
+  const ytPreviewId = extractYouTubeId(values.youtubeUrl);
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl">
@@ -144,16 +163,47 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
         accept="image"
         urls={values.imageUrls}
         onChange={(urls) => update("imageUrls", urls)}
-        max={MAX_MEDIA}
+        max={MAX_IMAGES}
       />
 
-      <CloudinaryMultiUploadButton
-        label="Videos (optional, up to 3)"
-        accept="video"
-        urls={values.videoUrls}
-        onChange={(urls) => update("videoUrls", urls)}
-        max={MAX_MEDIA}
-      />
+      {/* YouTube URL field */}
+      <div className="mb-6">
+        <label className="block text-sm font-semibold text-gray-700 mb-1">
+          YouTube Video Link{" "}
+          <span className="text-gray-400 font-normal">(optional)</span>
+        </label>
+        <input
+          type="url"
+          value={values.youtubeUrl}
+          onChange={(e) => update("youtubeUrl", e.target.value)}
+          placeholder="https://www.youtube.com/watch?v=..."
+          className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-brand-blue"
+        />
+        <p className="text-xs text-gray-400 mt-1">
+          Paste any YouTube link — the video will be shown nicely on the article page.
+        </p>
+
+        {/* Live preview when URL is valid */}
+        {ytPreviewId && (
+          <div className="mt-3">
+            <p className="text-xs font-semibold text-green-600 mb-1.5">✅ Valid YouTube link — preview:</p>
+            <div className="aspect-video w-full max-w-sm rounded overflow-hidden border border-green-200">
+              <iframe
+                src={`https://www.youtube.com/embed/${ytPreviewId}`}
+                className="w-full h-full"
+                allowFullScreen
+                title="YouTube preview"
+              />
+            </div>
+          </div>
+        )}
+
+        {values.youtubeUrl && !ytPreviewId && (
+          <p className="text-xs text-red-500 mt-1">
+            ⚠️ This doesn't look like a valid YouTube URL. Please check it.
+          </p>
+        )}
+      </div>
 
       <div className="mb-6 mt-2 space-y-3">
         <label className="flex items-center gap-2 text-sm text-gray-700">
