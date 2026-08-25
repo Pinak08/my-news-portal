@@ -18,7 +18,7 @@ export async function PUT(
   const finalImageUrls: string[] = (Array.isArray(body.imageUrls) ? body.imageUrls : body.imageUrl ? [body.imageUrl] : [])
     .filter(Boolean)
     .slice(0, 3);
-  const finalVideoUrls: string[] = (Array.isArray(body.videoUrls) ? body.videoUrls : body.videoUrl ? [body.videoUrl] : [])
+  const finalVideoUrls: string[] = (Array.isArray(body.videoUrls) && body.videoUrls.length > 0 ? body.videoUrls : body.videoUrl ? [body.videoUrl] : [])
     .filter(Boolean)
     .slice(0, 3);
 
