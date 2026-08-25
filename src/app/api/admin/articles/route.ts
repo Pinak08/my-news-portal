@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
   const finalImageUrls: string[] = (Array.isArray(imageUrls) ? imageUrls : imageUrl ? [imageUrl] : [])
     .filter(Boolean)
     .slice(0, 3);
-  const finalVideoUrls: string[] = (Array.isArray(videoUrls) ? videoUrls : videoUrl ? [videoUrl] : [])
+  const finalVideoUrls: string[] = (Array.isArray(videoUrls) && videoUrls.length > 0 ? videoUrls : videoUrl ? [videoUrl] : [])
     .filter(Boolean)
     .slice(0, 3);
 
