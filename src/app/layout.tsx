@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
+import { Noto_Sans_Gujarati, Noto_Serif_Gujarati } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+// Self-hosted at build time by next/font: no request to Google on page load,
+// no layout shift, and real Gujarati glyphs (the old Inter/Playfair fonts had
+// none, so every phone fell back to its own system font).
+const sans = Noto_Sans_Gujarati({ subsets: ["gujarati", "latin"], display: "swap", variable: "--font-sans" });
+const serif = Noto_Serif_Gujarati({ subsets: ["gujarati", "latin"], display: "swap", variable: "--font-serif" });
 
 export const metadata: Metadata = {
   title: {
@@ -23,15 +30,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="gu" className={`${sans.variable} ${serif.variable}`}>
       <body className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1">{children}</main>

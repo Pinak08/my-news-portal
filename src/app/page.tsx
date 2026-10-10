@@ -1,25 +1,33 @@
-import { getFeaturedArticle, getLatestArticles, getArticlesByCategory, getBreakingNews } from "@/lib/articles";
+import { getHomePageArticles, type ArticleSummary } from "@/lib/articles";
 import { getRandomActiveAd } from "@/lib/ads";
 import { FeaturedCard, ArticleCard, SmallCard } from "@/components/ArticleCard";
 import BreakingTicker from "@/components/BreakingTicker";
 import SectionHeader from "@/components/SectionHeader";
 import AdBanner from "@/components/AdBanner";
 
-export const revalidate = 86400; // 24 hrs safety net — instant rebuild on publish/edit/delete
+export const revalidate = 86400; // 24 hrs safety net — publish/edit/delete refresh this page instantly
 
 export default async function HomePage() {
-  const featured = await getFeaturedArticle();
-  const latest = await getLatestArticles(8);
-  const breakingNews = await getBreakingNews();
-  const politics = (await getArticlesByCategory("politics")).slice(0, 4);
-  const business = (await getArticlesByCategory("business")).slice(0, 4);
-  const sports = (await getArticlesByCategory("sports")).slice(0, 3);
-  const entertainment = (await getArticlesByCategory("entertainment")).slice(0, 3);
-  const ad = await getRandomActiveAd();
+  // One small query feeds every section below.
+  const [recent, ad] = await Promise.all([getHomePageArticles(), getRandomActiveAd()]);
+
+  // Ticker-only breaking items have no image; every other section needs one.
+  // The ticker is a client component, so pass it only what it renders.
+  const breakingNews = recent.filter((a) => a.breaking).map(({ slug, title }) => ({ slug, title }));
+  const withImage = recent.filter((a) => a.imageUrl);
+  const inCategory = (slug: string, n: number): ArticleSummary[] =>
+    withImage.filter((a) => a.categorySlug === slug).slice(0, n);
+
+  const featured = withImage.find((a) => a.featured) ?? withImage[0];
+  const politics = inCategory("politics", 4);
+  const business = inCategory("business", 4);
+  const sports = inCategory("sports", 3);
+  const entertainment = inCategory("entertainment", 3);
 
   // Latest articles excluding featured
-  const latestExFeatured = latest.filter((a) => a.slug !== featured.slug).slice(0, 5);
-  const latestGrid = latest.filter((a) => a.slug !== featured.slug).slice(0, 4);
+  const others = withImage.filter((a) => a.slug !== featured?.slug);
+  const latestExFeatured = others.slice(0, 5);
+  const latestGrid = others.slice(0, 4);
   const hasSidebar = latestExFeatured.length > 0;
   const hasPoliticsOrBusiness = politics.length > 0 || business.length > 0;
   const hasSportsOrEntertainment = sports.length > 0 || entertainment.length > 0;
@@ -35,7 +43,13 @@ export default async function HomePage() {
         <div className={`grid grid-cols-1 ${hasSidebar ? "lg:grid-cols-3" : ""} gap-6 mb-10`}>
           {/* Big featured story */}
           <div className={hasSidebar ? "lg:col-span-2" : ""}>
-            <FeaturedCard article={featured} />
+            {featured ? (
+              <FeaturedCard article={featured} />
+            ) : (
+              <div className="text-center py-20 text-gray-400">
+                <p className="text-2xl mb-2">હજુ કોઈ લેખ નથી</p>
+              </div>
+            )}
           </div>
 
           {/* Sidebar: latest articles — only shown once there's more than one article */}

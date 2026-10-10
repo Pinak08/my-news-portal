@@ -9,7 +9,7 @@
 
   body {
     @apply bg-brand-mist text-gray-900 antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   }
 
   a:focus-visible,
