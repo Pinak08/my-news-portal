@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { cloudinaryUrl } from "@/lib/cloudinary";
+import { extractYouTubeId } from "@/lib/youtube";
 
 interface Props {
   title: string;
@@ -9,11 +10,6 @@ interface Props {
   youtubeUrl?: string;
 }
 
-function extractYouTubeId(url: string): string | null {
-  if (!url) return null;
-  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
-  return m ? m[1] : null;
-}
 
 export default function ArticleMedia({ title, imageUrls, youtubeUrl }: Props) {
   const [activeImage, setActiveImage] = useState(0);

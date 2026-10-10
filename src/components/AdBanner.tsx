@@ -21,7 +21,7 @@ export default function AdBanner({ ad }: Props) {
 
       {ad.imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={cloudinaryUrl(ad.imageUrl, 800)} alt={ad.title || "Advertisement"} className="w-full max-h-72 object-cover" />
+        <img src={cloudinaryUrl(ad.imageUrl, 800)} loading="lazy" alt={ad.title || "Advertisement"} className="w-full max-h-72 object-cover" />
       )}
 
       {ad.videoUrl && (
