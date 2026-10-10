@@ -9,7 +9,7 @@ export default async function AdminDashboard() {
   const supabase = supabaseAdmin();
   const { data: articles } = await supabase
     .from("articles")
-    .select("id,slug,title,category,published_at,video_url,breaking,featured")
+    .select("id,slug,title,category,published_at,video_url,image_url,breaking,featured")
     .order("published_at", { ascending: false });
 
   return (
@@ -45,18 +45,20 @@ export default async function AdminDashboard() {
               <p className="text-xs text-gray-500">
                 {a.category} · {new Date(a.published_at).toLocaleDateString()}
                 {a.video_url ? " · 🎬 has video" : ""}
-                {a.breaking ? " · 🔴 breaking" : ""}
+                {a.breaking ? (a.image_url ? " · 🔴 breaking" : " · 🔴 ticker only") : ""}
                 {a.featured ? " · ⭐ featured" : ""}
               </p>
             </div>
             <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-              <Link
-                href={`/article/${a.slug}`}
-                target="_blank"
-                className="text-sm text-gray-500 hover:text-brand-blue"
-              >
-                View
-              </Link>
+              {a.image_url && (
+                <Link
+                  href={`/article/${a.slug}`}
+                  target="_blank"
+                  className="text-sm text-gray-500 hover:text-brand-blue"
+                >
+                  View
+                </Link>
+              )}
               <Link href={`/admin/edit/${a.id}`} className="text-sm text-brand-blue hover:underline">
                 Edit
               </Link>
