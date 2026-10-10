@@ -22,23 +22,33 @@ export async function PUT(
     .filter(Boolean)
     .slice(0, 3);
 
+  if (!body.breaking && finalImageUrls.length === 0) {
+    return NextResponse.json(
+      { error: "At least one cover image is required for regular articles." },
+      { status: 400 }
+    );
+  }
+
+  // Same rule as publishing: no image means ticker-only, title only.
+  const tickerOnly = finalImageUrls.length === 0;
+
   const supabase = supabaseAdmin();
   const { data, error } = await supabase
     .from("articles")
     .update({
       title: body.title,
-      excerpt: body.excerpt,
-      content: body.content,
+      excerpt: tickerOnly ? "" : body.excerpt,
+      content: tickerOnly ? "" : body.content,
       category: body.category,
       category_slug: body.categorySlug,
       author: body.author,
       // image_url/video_url mirror the first item for backward compatibility
       // with cards, homepage, and social share previews that only read one.
       image_url: finalImageUrls[0] || "",
-      video_url: finalVideoUrls[0] || null,
+      video_url: tickerOnly ? null : finalVideoUrls[0] || null,
       image_urls: finalImageUrls,
-      video_urls: finalVideoUrls,
-      featured: !!body.featured,
+      video_urls: tickerOnly ? [] : finalVideoUrls,
+      featured: !tickerOnly && !!body.featured,
       breaking: !!body.breaking,
     })
     .eq("id", id)
