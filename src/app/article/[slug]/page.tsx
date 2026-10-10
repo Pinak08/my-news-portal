@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import ArticleMedia from "@/components/ArticleMedia";
-import { getRandomActiveAd } from "@/lib/ads";
+import ArticleBody from "@/components/ArticleBody";
+import { getActiveAds } from "@/lib/ads";
 import AdBanner from "@/components/AdBanner";
 import Link from "next/link";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/articles";
@@ -56,10 +57,17 @@ export default async function ArticlePage({ params }: Props) {
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
-  const [related, ad] = await Promise.all([
+  const [related, ads] = await Promise.all([
     getRelatedArticles(article.categorySlug, article.slug),
-    getRandomActiveAd(),
+    getActiveAds(),
   ]);
+
+  // One ad query serves every slot. The sidebar gets a random ad and the
+  // in-article slots carry on through the rest of the rotation.
+  const start = ads.length > 0 ? Math.floor(Math.random() * ads.length) : 0;
+  const rotated = [...ads.slice(start), ...ads.slice(0, start)];
+  const ad = rotated[0] ?? null;
+  const inArticleAds = [...rotated.slice(1), ...rotated.slice(0, 1)];
 
   // Falls back to your current Vercel URL if NEXT_PUBLIC_SITE_URL isn't set.
   // Once tv10gujarat.in (or any custom domain) is pointed at this project,
@@ -151,14 +159,10 @@ export default async function ArticlePage({ params }: Props) {
           />
 
           {/* Article body */}
-          <div
-            className="article-body text-gray-800 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: article.content }}
-          />
+          <ArticleBody content={article.content} ads={inArticleAds} />
 
           {/* Bottom share */}
           <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-sm font-semibold text-gray-600 mb-3">શું આ લેખ તમને ઉપયોગી લાગ્યો? શેર કરો:</p>
             <div className="flex items-center gap-3">
               <a
                 href={`https://wa.me/?text=${whatsappText}`}
