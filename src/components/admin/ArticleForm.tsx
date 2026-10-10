@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CloudinaryMultiUploadButton from "@/components/CloudinaryMultiUploadButton";
 import { categories } from "@/lib/categories";
+import { extractYouTubeId } from "@/lib/youtube";
 
 export interface ArticleFormValues {
   id?: number;
@@ -21,17 +22,6 @@ export interface ArticleFormValues {
 const navCategories = categories.filter((c) => c.slug !== "/");
 const MAX_IMAGES = 3;
 
-function extractYouTubeId(url: string): string | null {
-  if (!url) return null;
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/,
-  ];
-  for (const p of patterns) {
-    const m = url.match(p);
-    if (m) return m[1];
-  }
-  return null;
-}
 
 export default function ArticleForm({ initial }: { initial?: ArticleFormValues }) {
   const router = useRouter();
@@ -180,7 +170,7 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
           className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-brand-blue"
         />
         <p className="text-xs text-gray-400 mt-1">
-          Paste any YouTube link — the video will be shown nicely on the article page.
+          Paste any YouTube link — the video will be shown nicely on the article page. Live links (youtube.com/live/...) work too: લાઈવ લીંક પણ ચાલશે.
         </p>
 
         {/* Live preview when URL is valid */}
