@@ -76,9 +76,16 @@ export default function Header() {
             </button>
           </form>
 
-          {/* Hamburger for mobile */}
+          {/* Mobile: search icon + hamburger */}
+          <div className="md:hidden flex items-center gap-4">
+          <Link prefetch={false} href="/search" aria-label="શોધો" className="text-gray-700">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="7" strokeWidth={2} />
+              <path strokeLinecap="round" strokeWidth={2} d="M20 20l-3.5-3.5" />
+            </svg>
+          </Link>
           <button
-            className="md:hidden text-gray-700"
+            className="text-gray-700"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="મેનૂ ટૉગલ કરો"
           >
@@ -90,11 +97,12 @@ export default function Header() {
               )}
             </svg>
           </button>
+          </div>
         </div>
       </div>
 
-      {/* Navigation bar */}
-      <nav className="bg-brand-blue hidden md:block">
+      {/* Navigation bar — on phones it scrolls sideways */}
+      <nav className="bg-brand-blue">
         <div className="max-w-7xl mx-auto">
           <ul className="flex items-center overflow-x-auto">
             <li>

@@ -45,7 +45,7 @@ export default function ArticleBody({ content, ads }: { content: string; ads: Ad
             <div dangerouslySetInnerHTML={{ __html: html }} />
             {ad && (
               <div className="my-6">
-                <AdBanner ad={ad} />
+                <AdBanner ad={ad} compact />
               </div>
             )}
           </div>
