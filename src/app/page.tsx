@@ -13,7 +13,9 @@ export default async function HomePage() {
 
   // Ticker-only breaking items have no image; every other section needs one.
   // The ticker is a client component, so pass it only what it renders.
-  const breakingNews = recent.filter((a) => a.breaking).map(({ slug, title }) => ({ slug, title }));
+  const breakingNews = recent
+    .filter((a) => a.breaking)
+    .map(({ slug, title, imageUrl }) => ({ slug, title, hasPage: !!imageUrl }));
   const withImage = recent.filter((a) => a.imageUrl);
   const inCategory = (slug: string, n: number): ArticleSummary[] =>
     withImage.filter((a) => a.categorySlug === slug).slice(0, n);
