@@ -9,7 +9,7 @@ export default async function AdminDashboard() {
   const supabase = supabaseAdmin();
   const { data: articles } = await supabase
     .from("articles")
-    .select("*")
+    .select("id,slug,title,category,published_at,video_url,breaking,featured")
     .order("published_at", { ascending: false });
 
   return (
