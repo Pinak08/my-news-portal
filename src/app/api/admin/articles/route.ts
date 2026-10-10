@@ -63,6 +63,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // No image means a ticker-only item: it has no article page, so keep only
+  // the title and drop everything that would only ever show on that page.
+  const tickerOnly = finalImageUrls.length === 0;
+
   // Only new articles get a slug; editing never changes it, so links that
   // have already been shared keep working.
   const slug = `${slugify(title) || "news"}-${Date.now().toString(36)}`;
@@ -73,18 +77,18 @@ export async function POST(req: NextRequest) {
     .insert({
       slug,
       title,
-      excerpt: excerpt || "",
-      content: content || "",
+      excerpt: tickerOnly ? "" : excerpt || "",
+      content: tickerOnly ? "" : content || "",
       category,
       category_slug: categorySlug,
       author: author || "",
       // image_url/video_url mirror the first item for backward compatibility
       // with cards, homepage, and social share previews that only read one.
       image_url: finalImageUrls[0] || "",
-      video_url: finalVideoUrls[0] || null,
+      video_url: tickerOnly ? null : finalVideoUrls[0] || null,
       image_urls: finalImageUrls,
-      video_urls: finalVideoUrls,
-      featured: !!featured,
+      video_urls: tickerOnly ? [] : finalVideoUrls,
+      featured: !tickerOnly && !!featured,
       breaking: !!breaking,
       published_at: new Date().toISOString(),
     })
