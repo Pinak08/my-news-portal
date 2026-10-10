@@ -1,11 +1,28 @@
 import { getHomePageArticles, type ArticleSummary } from "@/lib/articles";
 import { getRandomActiveAd } from "@/lib/ads";
-import { FeaturedCard, ArticleCard, SmallCard } from "@/components/ArticleCard";
+import { categories } from "@/lib/categories";
+import { extractYouTubeId } from "@/lib/youtube";
+import { FeaturedCard, ArticleCard, SmallCard, VideoCard } from "@/components/ArticleCard";
 import BreakingTicker from "@/components/BreakingTicker";
 import SectionHeader from "@/components/SectionHeader";
 import AdBanner from "@/components/AdBanner";
 
 export const revalidate = 86400; // 24 hrs safety net — publish/edit/delete refresh this page instantly
+
+function CategoryBlock({ name, slug, articles }: { name: string; slug: string; articles: ArticleSummary[] }) {
+  const [lead, ...rest] = articles;
+  return (
+    <section className="bg-white p-5 border border-gray-100 shadow-sm rounded-lg">
+      <SectionHeader title={name} href={`/category/${slug}`} />
+      <div className="mb-2">
+        <FeaturedCard article={lead} />
+      </div>
+      {rest.map((a) => (
+        <SmallCard key={a.id} article={a} />
+      ))}
+    </section>
+  );
+}
 
 export default async function HomePage() {
   // One small query feeds every section below.
@@ -17,152 +34,98 @@ export default async function HomePage() {
     .filter((a) => a.breaking)
     .map(({ slug, title, imageUrl }) => ({ slug, title, hasPage: !!imageUrl }));
   const withImage = recent.filter((a) => a.imageUrl);
-  const inCategory = (slug: string, n: number): ArticleSummary[] =>
-    withImage.filter((a) => a.categorySlug === slug).slice(0, n);
 
   const featured = withImage.find((a) => a.featured) ?? withImage[0];
-  const politics = inCategory("politics", 4);
-  const business = inCategory("business", 4);
-  const sports = inCategory("sports", 3);
-  const entertainment = inCategory("entertainment", 3);
-
-  // Latest articles excluding featured
   const others = withImage.filter((a) => a.slug !== featured?.slug);
-  const latestExFeatured = others.slice(0, 5);
-  const latestGrid = others.slice(0, 4);
-  const hasSidebar = latestExFeatured.length > 0;
-  const hasPoliticsOrBusiness = politics.length > 0 || business.length > 0;
-  const hasSportsOrEntertainment = sports.length > 0 || entertainment.length > 0;
+  const latestList = others.slice(0, 5); // sidebar beside the hero
+  const topGrid = others.slice(5, 9); // the next four, so nothing repeats
+
+  const videos = withImage.filter((a) => extractYouTubeId(a.videoUrl)).slice(0, 4);
+
+  const categoryBlocks = categories
+    .filter((c) => c.slug !== "/")
+    .map((c) => ({
+      ...c,
+      articles: others.filter((a) => a.categorySlug === c.slug).slice(0, 4),
+    }))
+    .filter((c) => c.articles.length > 0);
 
   return (
     <div>
-      {/* Breaking news ticker */}
       {breakingNews.length > 0 && <BreakingTicker articles={breakingNews} />}
 
       <div className="max-w-7xl mx-auto px-4 py-6">
+        {!featured ? (
+          <div className="text-center py-20 text-gray-400">
+            <p className="text-2xl mb-2">હજુ કોઈ લેખ નથી</p>
+          </div>
+        ) : (
+          <>
+            {/* ─── HERO ─── */}
+            <div className={`grid grid-cols-1 ${latestList.length > 0 ? "lg:grid-cols-3" : ""} gap-6 mb-10`}>
+              <div className={latestList.length > 0 ? "lg:col-span-2" : ""}>
+                <FeaturedCard article={featured} priority />
+              </div>
+              {latestList.length > 0 && (
+                <aside className="bg-white p-4 border border-gray-100 shadow-sm rounded-lg">
+                  <SectionHeader title="તાજા સમાચાર" />
+                  {latestList.map((a) => (
+                    <SmallCard key={a.id} article={a} />
+                  ))}
+                </aside>
+              )}
+            </div>
 
-        {/* ─── HERO SECTION ─── */}
-        <div className={`grid grid-cols-1 ${hasSidebar ? "lg:grid-cols-3" : ""} gap-6 mb-10`}>
-          {/* Big featured story */}
-          <div className={hasSidebar ? "lg:col-span-2" : ""}>
-            {featured ? (
-              <FeaturedCard article={featured} />
-            ) : (
-              <div className="text-center py-20 text-gray-400">
-                <p className="text-2xl mb-2">હજુ કોઈ લેખ નથી</p>
+            {/* ─── TOP STORIES ─── */}
+            {topGrid.length > 0 && (
+              <section className="mb-10">
+                <SectionHeader title="મુખ્ય સમાચાર" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {topGrid.map((a) => (
+                    <ArticleCard key={a.id} article={a} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {ad && (
+              <div className="mb-10 max-w-3xl mx-auto">
+                <AdBanner ad={ad} compact />
               </div>
             )}
-          </div>
+          </>
+        )}
+      </div>
 
-          {/* Sidebar: latest articles — only shown once there's more than one article */}
-          {hasSidebar && (
-            <div className="bg-white p-4 border border-gray-100 shadow-sm">
-              <SectionHeader title="તાજા સમાચાર" href="/category/politics" />
-              <div>
-                {latestExFeatured.map((article) => (
-                  <SmallCard key={article.id} article={article} />
-                ))}
-              </div>
+      {/* ─── VIDEO STRIP ─── */}
+      {videos.length >= 2 && (
+        <section className="bg-brand-navy py-8 mb-10">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-center gap-3 mb-5">
+              <span className="w-1.5 h-6 bg-red-600 rounded-full" />
+              <h2 className="text-lg font-bold text-white font-serif">વિડિઓ સમાચાર</h2>
             </div>
-          )}
-        </div>
-
-        {/* ─── LATEST NEWS GRID ─── */}
-        {latestGrid.length > 0 && (
-          <section className="mb-10">
-            <SectionHeader title="મુખ્ય સમાચાર" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {latestGrid.map((article) => (
-                <ArticleCard key={article.id} article={article} />
+            <div className="flex gap-4 overflow-x-auto pb-2 snap-x lg:grid lg:grid-cols-4 lg:overflow-visible">
+              {videos.map((a) => (
+                <div key={a.id} className="w-64 flex-shrink-0 snap-start lg:w-auto">
+                  <VideoCard article={a} />
+                </div>
               ))}
             </div>
-          </section>
-        )}
-
-        {/* ─── POLITICS + BUSINESS SIDE BY SIDE ─── */}
-        {hasPoliticsOrBusiness && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-
-            {/* Politics */}
-            {politics.length > 0 && (
-              <section className="bg-white p-5 border border-gray-100 shadow-sm">
-                <SectionHeader title="રાજકારણ" href="/category/politics" />
-                {politics[0] && (
-                  <div className="mb-4">
-                    <FeaturedCard article={politics[0]} />
-                  </div>
-                )}
-                <div>
-                  {politics.slice(1).map((article) => (
-                    <SmallCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Business */}
-            {business.length > 0 && (
-              <section className="bg-white p-5 border border-gray-100 shadow-sm">
-                <SectionHeader title="વ્યાપાર" href="/category/business" />
-                {business[0] && (
-                  <div className="mb-4">
-                    <FeaturedCard article={business[0]} />
-                  </div>
-                )}
-                <div>
-                  {business.slice(1).map((article) => (
-                    <SmallCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </section>
-            )}
-
           </div>
-        )}
+        </section>
+      )}
 
-        {/* ─── SPORTS + ENTERTAINMENT ─── */}
-        {hasSportsOrEntertainment && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-
-            {/* Sports */}
-            {sports.length > 0 && (
-              <section>
-                <SectionHeader title="રમતગમત" href="/category/sports" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {sports.map((article) => (
-                    <ArticleCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Entertainment */}
-            {entertainment.length > 0 && (
-              <section>
-                <SectionHeader title="મનોરંજન" href="/category/entertainment" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {entertainment.map((article) => (
-                    <ArticleCard key={article.id} article={article} />
-                  ))}
-                </div>
-              </section>
-            )}
-
+      {/* ─── CATEGORY SECTIONS ─── */}
+      {categoryBlocks.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 pb-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {categoryBlocks.map((c) => (
+              <CategoryBlock key={c.slug} name={c.name} slug={c.slug} articles={c.articles} />
+            ))}
           </div>
-        )}
-
-        {/* ─── AD SLOT ─── */}
-        <div className="mb-10">
-          {ad ? (
-            <AdBanner ad={ad} />
-          ) : (
-            <div className="bg-gray-200 text-gray-500 text-center py-6 rounded text-sm">
-              જાહેરાત સ્થળ
-            </div>
-          )}
         </div>
-
-      </div>
+      )}
     </div>
   );
 }
