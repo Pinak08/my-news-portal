@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidAdminSession } from "@/lib/adminAuth";
-import { revalidatePath } from "next/cache";
+import { revalidateArticlePages } from "@/lib/revalidate";
 
 export async function PUT(
   req: NextRequest,
@@ -46,7 +46,7 @@ export async function PUT(
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  revalidatePath("/", "layout");
+  revalidateArticlePages(data.slug);
   return NextResponse.json({ article: data });
 }
 
@@ -59,9 +59,15 @@ export async function DELETE(
   }
   const { id } = await params;
   const supabase = supabaseAdmin();
-  const { error } = await supabase.from("articles").delete().eq("id", id);
+  const { data, error } = await supabase
+    .from("articles")
+    .delete()
+    .eq("id", id)
+    .select("slug")
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  revalidatePath("/", "layout");
+  // The deleted article's own page must be purged too, or it stays live from cache.
+  revalidateArticlePages(data?.slug);
   return NextResponse.json({ ok: true });
 }
