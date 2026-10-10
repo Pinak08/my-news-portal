@@ -3,7 +3,8 @@ import ArticleMedia from "@/components/ArticleMedia";
 import { getRandomActiveAd } from "@/lib/ads";
 import AdBanner from "@/components/AdBanner";
 import Link from "next/link";
-import { getArticleBySlug, getArticlesByCategory, getAllArticles } from "@/lib/articles";
+import { getArticleBySlug, getRelatedArticles } from "@/lib/articles";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 import { SmallCard } from "@/components/ArticleCard";
 import SectionHeader from "@/components/SectionHeader";
 import type { Metadata } from "next";
@@ -22,14 +23,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: article.title,
       description: article.excerpt,
-      images: [article.imageUrl],
+      images: article.imageUrl ? [cloudinaryUrl(article.imageUrl, 1200)] : ["/logo.jpg"],
     },
   };
 }
 
+// Build nothing at deploy time. Each article page is rendered on its first
+// visit and then served from cache, so a deploy no longer re-renders (and
+// re-fetches) the entire archive.
 export async function generateStaticParams() {
-  const articles = await getAllArticles();
-  return articles.map((a) => ({ slug: a.slug }));
+  return [];
 }
 
 function formatDate(dateStr: string) {
@@ -40,21 +43,23 @@ function formatDate(dateStr: string) {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "Asia/Kolkata",
   });
 }
 
-export const revalidate = 86400; // 24 hrs safety net — instant rebuild on publish/edit/delete
+// Articles rarely change, and every edit/delete refreshes the page instantly,
+// so this is only a weekly safety net. Fewer rebuilds = fewer ISR writes.
+export const revalidate = 604800;
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
-  const related = (await getArticlesByCategory(article.categorySlug))
-    .filter((a) => a.slug !== article.slug)
-    .slice(0, 4);
-
-  const ad = await getRandomActiveAd();
+  const [related, ad] = await Promise.all([
+    getRelatedArticles(article.categorySlug, article.slug),
+    getRandomActiveAd(),
+  ]);
 
   // Falls back to your current Vercel URL if NEXT_PUBLIC_SITE_URL isn't set.
   // Once tv10gujarat.in (or any custom domain) is pointed at this project,
@@ -75,9 +80,9 @@ export default async function ArticlePage({ params }: Props) {
 
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <Link href="/" className="hover:text-brand-blue transition-colors">હોમ</Link>
+            <Link prefetch={false} href="/" className="hover:text-brand-blue transition-colors">હોમ</Link>
             <span>/</span>
-            <Link href={`/category/${article.categorySlug}`} className="hover:text-brand-blue transition-colors">
+            <Link prefetch={false} href={`/category/${article.categorySlug}`} className="hover:text-brand-blue transition-colors">
               {article.category}
             </Link>
           </div>
@@ -141,7 +146,7 @@ export default async function ArticlePage({ params }: Props) {
           {/* Images and videos, shown as separate sections */}
           <ArticleMedia
             title={article.title}
-            imageUrls={article.imageUrls.length > 0 ? article.imageUrls : article.imageUrl ? [article.imageUrl] : []}
+            imageUrls={article.imageUrls}
             youtubeUrl={article.videoUrl || undefined}
           />
 
