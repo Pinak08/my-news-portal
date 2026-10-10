@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { categories } from "@/lib/articles";
+import { useEffect, useState } from "react";
+import { categories } from "@/lib/categories";
 import SocialIcons from "@/components/SocialIcons";
 
 const SITE_NAME = "TV10 Gujarat";
@@ -12,12 +12,20 @@ export default function Header() {
 
   const navCategories = categories.filter((c) => c.slug !== "/");
 
-  const today = new Date().toLocaleDateString("en-IN", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  // Computed in the browser: the header is part of cached pages, so a
+  // server-rendered date would show the day the page was last built.
+  const [today, setToday] = useState("");
+  useEffect(() => {
+    setToday(
+      new Date().toLocaleDateString("en-IN", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "Asia/Kolkata",
+      })
+    );
+  }, []);
 
   return (
     <header>
@@ -32,7 +40,7 @@ export default function Header() {
       {/* Main header */}
       <div className="bg-white border-b-2 border-brand-blue py-4 px-4 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
+          <Link prefetch={false} href="/" className="flex items-center gap-3">
             <Image
               src="/logo.jpg"
               alt={SITE_NAME}
@@ -90,7 +98,7 @@ export default function Header() {
         <div className="max-w-7xl mx-auto">
           <ul className="flex items-center overflow-x-auto">
             <li>
-              <Link
+              <Link prefetch={false}
                 href="/"
                 className="block px-4 py-2.5 text-white text-sm font-semibold hover:bg-brand-navy transition-colors whitespace-nowrap"
               >
@@ -99,7 +107,7 @@ export default function Header() {
             </li>
             {navCategories.map((cat) => (
               <li key={cat.slug}>
-                <Link
+                <Link prefetch={false}
                   href={`/category/${cat.slug}`}
                   className="block px-4 py-2.5 text-white text-sm font-semibold hover:bg-brand-navy transition-colors whitespace-nowrap"
                 >
@@ -133,7 +141,7 @@ export default function Header() {
           </div>
           <ul>
             <li>
-              <Link
+              <Link prefetch={false}
                 href="/"
                 className="block px-4 py-3 text-sm font-semibold text-gray-800 border-b hover:bg-gray-50"
                 onClick={() => setMenuOpen(false)}
@@ -143,7 +151,7 @@ export default function Header() {
             </li>
             {navCategories.map((cat) => (
               <li key={cat.slug}>
-                <Link
+                <Link prefetch={false}
                   href={`/category/${cat.slug}`}
                   className="block px-4 py-3 text-sm font-semibold text-gray-800 border-b hover:bg-gray-50"
                   onClick={() => setMenuOpen(false)}

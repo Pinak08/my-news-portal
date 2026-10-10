@@ -12,7 +12,7 @@ export default function SectionHeader({ title, href }: Props) {
         {title}
       </h2>
       {href && (
-        <Link
+        <Link prefetch={false}
           href={href}
           className="text-xs font-semibold text-brand-red hover:text-brand-darkred uppercase tracking-wide transition-colors"
         >

@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
-import { Article } from "@/lib/articles";
+import type { ArticleSummary } from "@/lib/articles";
 
-export default function BreakingTicker({ articles }: { articles: Article[] }) {
+export default function BreakingTicker({ articles }: { articles: Pick<ArticleSummary, "slug" | "title">[] }) {
   if (!articles.length) return null;
 
   const tickerText = articles
@@ -20,7 +20,7 @@ export default function BreakingTicker({ articles }: { articles: Article[] }) {
         <div className="animate-marquee whitespace-nowrap text-sm py-2 px-4">
           {articles.map((a, i) => (
             <span key={i}>
-              <Link
+              <Link prefetch={false}
                 href={`/article/${a.slug}`}
                 className="hover:text-brand-sky transition-colors mr-12"
               >
@@ -31,7 +31,7 @@ export default function BreakingTicker({ articles }: { articles: Article[] }) {
           {/* Duplicate for seamless loop */}
           {articles.map((a, i) => (
             <span key={`dup-${i}`}>
-              <Link
+              <Link prefetch={false}
                 href={`/article/${a.slug}`}
                 className="hover:text-brand-sky transition-colors mr-12"
               >

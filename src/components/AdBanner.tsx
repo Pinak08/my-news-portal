@@ -1,4 +1,5 @@
 import type { Advertisement } from "@/lib/ads";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 interface Props {
   ad: Advertisement;
@@ -20,11 +21,11 @@ export default function AdBanner({ ad }: Props) {
 
       {ad.imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={ad.imageUrl} alt={ad.title || "Advertisement"} className="w-full max-h-72 object-cover" />
+        <img src={cloudinaryUrl(ad.imageUrl, 800)} alt={ad.title || "Advertisement"} className="w-full max-h-72 object-cover" />
       )}
 
       {ad.videoUrl && (
-        <video src={ad.videoUrl} controls className="w-full max-h-72 bg-black" />
+        <video src={ad.videoUrl} controls preload="none" className="w-full max-h-72 bg-black" />
       )}
 
       {(ad.title || ad.bodyText) && (

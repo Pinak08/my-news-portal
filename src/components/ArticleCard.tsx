@@ -1,24 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Article } from "@/lib/articles";
+import type { ArticleSummary } from "@/lib/articles";
+import { cloudinaryUrl } from "@/lib/cloudinary";
+import TimeAgo from "@/components/TimeAgo";
 
-function timeAgo(dateStr: string): string {
-  const now = new Date();
-  const date = new Date(dateStr);
-  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-  if (diff < 60) return "હમણાં જ";
-  if (diff < 3600) return `${Math.floor(diff / 60)} મિનિટ પહેલાં`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} કલાક પહેલાં`;
-  return date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
-}
 
 // Large horizontal card — for featured/hero
-export function FeaturedCard({ article }: { article: Article }) {
+export function FeaturedCard({ article }: { article: ArticleSummary }) {
   return (
-    <Link href={`/article/${article.slug}`} className="group block">
+    <Link prefetch={false} href={`/article/${article.slug}`} className="group block">
       <div className="relative w-full aspect-[16/9] overflow-hidden bg-gray-200 rounded-xl shadow-md">
         <Image
-          src={article.imageUrl}
+          src={cloudinaryUrl(article.imageUrl, 1200)}
           alt={article.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -35,7 +28,7 @@ export function FeaturedCard({ article }: { article: Article }) {
           <div className="flex items-center gap-2 mt-2 text-gray-400 text-xs">
             <span>{article.author}</span>
             <span>·</span>
-            <span>{timeAgo(article.publishedAt)}</span>
+            <TimeAgo date={article.publishedAt} />
           </div>
         </div>
       </div>
@@ -44,12 +37,12 @@ export function FeaturedCard({ article }: { article: Article }) {
 }
 
 // Medium card — image top, text below
-export function ArticleCard({ article }: { article: Article }) {
+export function ArticleCard({ article }: { article: ArticleSummary }) {
   return (
-    <Link href={`/article/${article.slug}`} className="group block">
+    <Link prefetch={false} href={`/article/${article.slug}`} className="group block">
       <div className="relative w-full aspect-[16/9] overflow-hidden bg-gray-200 mb-3 rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
         <Image
-          src={article.imageUrl}
+          src={cloudinaryUrl(article.imageUrl, 640)}
           alt={article.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -65,19 +58,19 @@ export function ArticleCard({ article }: { article: Article }) {
       <div className="flex items-center gap-2 mt-2 text-gray-400 text-xs">
         <span>{article.author}</span>
         <span>·</span>
-        <span>{timeAgo(article.publishedAt)}</span>
+        <TimeAgo date={article.publishedAt} />
       </div>
     </Link>
   );
 }
 
 // Small horizontal card — for sidebar lists
-export function SmallCard({ article }: { article: Article }) {
+export function SmallCard({ article }: { article: ArticleSummary }) {
   return (
-    <Link href={`/article/${article.slug}`} className="group flex gap-3 py-3 border-b border-gray-100 last:border-0">
+    <Link prefetch={false} href={`/article/${article.slug}`} className="group flex gap-3 py-3 border-b border-gray-100 last:border-0">
       <div className="relative w-24 h-16 flex-shrink-0 overflow-hidden bg-gray-200 rounded-md">
         <Image
-          src={article.imageUrl}
+          src={cloudinaryUrl(article.imageUrl, 240)}
           alt={article.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -88,7 +81,7 @@ export function SmallCard({ article }: { article: Article }) {
         <h4 className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 group-hover:text-brand-blue transition-colors mt-0.5 font-serif">
           {article.title}
         </h4>
-        <span className="text-gray-400 text-xs">{timeAgo(article.publishedAt)}</span>
+        <span className="text-gray-400 text-xs"><TimeAgo date={article.publishedAt} /></span>
       </div>
     </Link>
   );

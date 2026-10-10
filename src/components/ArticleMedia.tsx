@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 interface Props {
   title: string;
@@ -28,7 +29,7 @@ export default function ArticleMedia({ title, imageUrls, youtubeUrl }: Props) {
         <div>
           <div className="relative w-full aspect-[16/9] overflow-hidden bg-gray-200 rounded-lg">
             <Image
-              src={imageUrls[activeImage]}
+              src={cloudinaryUrl(imageUrls[activeImage], 1200)}
               alt={title}
               fill
               className="object-cover"
@@ -46,7 +47,7 @@ export default function ArticleMedia({ title, imageUrls, youtubeUrl }: Props) {
                     i === activeImage ? "border-brand-blue" : "border-transparent"
                   }`}
                 >
-                  <Image src={url} alt={`${title} ${i + 1}`} fill className="object-cover" />
+                  <Image src={cloudinaryUrl(url, 160)} alt={`${title} ${i + 1}`} fill className="object-cover" />
                 </button>
               ))}
             </div>

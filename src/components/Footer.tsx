@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { categories } from "@/lib/articles";
+import { categories } from "@/lib/categories";
 import SocialIcons from "@/components/SocialIcons";
 
 const SITE_NAME = "TV10 Gujarat";
@@ -28,7 +28,7 @@ export default function Footer() {
             <ul className="grid grid-cols-2 gap-y-2 gap-x-4">
               {navCategories.map((cat) => (
                 <li key={cat.slug}>
-                  <Link
+                  <Link prefetch={false}
                     href={`/category/${cat.slug}`}
                     className="text-sm text-gray-400 hover:text-white transition-colors"
                   >
@@ -48,11 +48,11 @@ export default function Footer() {
               <li>📍 અમદાવાદ, ગુજરાત, ભારત</li>
             </ul>
             <div className="mt-4 flex gap-3">
-              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">અમારા વિશે</Link>
+              <Link prefetch={false} href="#" className="text-sm text-gray-400 hover:text-white transition-colors">અમારા વિશે</Link>
               <span>·</span>
-              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">ગોપનીયતા</Link>
+              <Link prefetch={false} href="#" className="text-sm text-gray-400 hover:text-white transition-colors">ગોપનીયતા</Link>
               <span>·</span>
-              <Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">સંપર્ક કરો</Link>
+              <Link prefetch={false} href="#" className="text-sm text-gray-400 hover:text-white transition-colors">સંપર્ક કરો</Link>
             </div>
           </div>
         </div>
