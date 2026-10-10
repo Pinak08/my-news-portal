@@ -12,6 +12,8 @@ export function revalidateArticlePages(slug?: string | null) {
   for (const c of categories) {
     if (c.slug !== "/") revalidatePath(`/category/${c.slug}`);
   }
+  // Every older category page shifts by one when an article is added.
+  revalidatePath("/category/[slug]/page/[page]", "page");
   if (slug) revalidatePath(`/article/${slug}`);
 }
 
