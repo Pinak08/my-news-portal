@@ -2,15 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidAdminSession } from "@/lib/adminAuth";
 import { revalidateArticlePages } from "@/lib/revalidate";
-
-function slugify(title: string) {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .slice(0, 80);
-}
+import { slugify } from "@/lib/slug";
 
 export async function GET(req: NextRequest) {
   if (!isValidAdminSession(req)) {
@@ -71,7 +63,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const slug = `${slugify(title)}-${Date.now().toString(36)}`;
+  // Only new articles get a slug; editing never changes it, so links that
+  // have already been shared keep working.
+  const slug = `${slugify(title) || "news"}-${Date.now().toString(36)}`;
 
   const supabase = supabaseAdmin();
   const { data, error } = await supabase
