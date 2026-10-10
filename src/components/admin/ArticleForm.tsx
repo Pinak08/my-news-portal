@@ -232,6 +232,11 @@ export default function ArticleForm({ initial }: { initial?: ArticleFormValues }
                 <span className="font-semibold block mb-0.5">ટિકરમાં ફક્ત શીર્ષક (Title) જ દેખાય છે.</span>
                 Excerpt, content, image — nothing else appears in the ticker. Only the <strong>Title</strong> field is used. Make sure your title is clear and complete.
               </p>
+              {values.imageUrls.length === 0 && (
+                <p className="text-xs text-amber-800 leading-relaxed mt-1.5">
+                  <span className="font-semibold">ફોટો વગર: ફક્ત ટિકર.</span> No image, so this appears only in the ticker. No article page is created.
+                </p>
+              )}
             </div>
           )}
         </div>
