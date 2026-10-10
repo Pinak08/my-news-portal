@@ -93,11 +93,13 @@ export const getHomePageArticles = cache(async (): Promise<ArticleSummary[]> => 
 });
 
 // cache() lets generateMetadata and the page share one query per render.
+// Ticker-only items (no image) have no article page, so they 404 here.
 export const getArticleBySlug = cache(async (slug: string): Promise<Article | null> => {
   const { data, error } = await supabasePublic
     .from("articles")
     .select(ARTICLE_COLUMNS)
     .eq("slug", slug)
+    .neq("image_url", "")
     .maybeSingle();
 
   if (error) fail(`article "${slug}"`, error.message);
