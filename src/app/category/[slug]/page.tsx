@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { getArticlesByCategory } from "@/lib/articles";
+import { getCategoryPage } from "@/lib/articles";
 import { getCategoryName, isKnownCategory, categories } from "@/lib/categories";
-import { ArticleCard, FeaturedCard } from "@/components/ArticleCard";
+import CategoryListing from "@/components/CategoryListing";
 import type { Metadata } from "next";
 
 interface Props {
@@ -32,47 +32,8 @@ export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
   if (!isKnownCategory(slug)) notFound();
 
-  const articles = await getArticlesByCategory(slug);
-  const categoryName = getCategoryName(slug);
-
-  const [featured, ...rest] = articles;
-
+  const { articles, hasMore } = await getCategoryPage(slug, 1);
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-
-      {/* Category header */}
-      <div className="border-b-4 border-brand-blue pb-3 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 font-serif">{categoryName}</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          {articles.length} લેખ
-        </p>
-      </div>
-
-      {articles.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
-          <p className="text-2xl mb-2">હજુ કોઈ લેખ નથી</p>
-          <p className="text-sm">નવીનતમ {categoryName} સમાચાર માટે ટૂંક સમયમાં ફરી તપાસો.</p>
-        </div>
-      ) : (
-        <>
-          {/* Featured article */}
-          {featured && (
-            <div className="mb-8">
-              <FeaturedCard article={featured} />
-            </div>
-          )}
-
-          {/* Rest of articles */}
-          {rest.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {rest.map((article) => (
-                <ArticleCard key={article.id} article={article} />
-              ))}
-            </div>
-          )}
-        </>
-      )}
-
-    </div>
+    <CategoryListing slug={slug} name={getCategoryName(slug)} page={1} articles={articles} hasMore={hasMore} />
   );
 }
