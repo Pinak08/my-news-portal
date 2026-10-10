@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getArticlesByCategory, getCategoryName, categories } from "@/lib/articles";
+import { getArticlesByCategory } from "@/lib/articles";
+import { getCategoryName, isKnownCategory, categories } from "@/lib/categories";
 import { ArticleCard, FeaturedCard } from "@/components/ArticleCard";
 import type { Metadata } from "next";
 
@@ -22,14 +23,17 @@ export async function generateStaticParams() {
     .map((c) => ({ slug: c.slug }));
 }
 
-export const revalidate = 86400; // 24 hrs safety net — instant rebuild on publish/edit/delete
+export const revalidate = 86400; // 24 hrs safety net — publish/edit/delete refresh this page instantly
+// Only the categories above exist; any other /category/... URL is a plain 404
+// instead of a fresh render and cache write for every bot-guessed URL.
+export const dynamicParams = false;
 
 export default async function CategoryPage({ params }: Props) {
   const { slug } = await params;
+  if (!isKnownCategory(slug)) notFound();
+
   const articles = await getArticlesByCategory(slug);
   const categoryName = getCategoryName(slug);
-
-  if (!articles && !categoryName) notFound();
 
   const [featured, ...rest] = articles;
 
