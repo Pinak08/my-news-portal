@@ -37,7 +37,7 @@ export default function AdForm({ initial }: { initial?: AdFormValues }) {
     setError("");
 
     if (!values.title && !values.imageUrl && !values.videoUrl && !values.bodyText) {
-      setError("Add at least a title, image, video, or text — an ad needs at least one of these to show anything.");
+      setError("Add at least a title, image, or text — an ad needs at least one of these to show anything.");
       return;
     }
 
@@ -62,10 +62,10 @@ export default function AdForm({ initial }: { initial?: AdFormValues }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl">
       <p className="text-sm text-gray-500 mb-6">
-        બધા ફિલ્ડ વૈકલ્પિક છે — તમે ફક્ત ટાઈટલ, ફક્ત ઈમેજ, ફક્ત વિડિઓ, અથવા ફક્ત ટેક્સ્ટ સાથે પણ જાહેરાત બનાવી શકો છો.
+        બધા ફિલ્ડ વૈકલ્પિક છે — તમે ફક્ત ટાઈટલ, ફક્ત ઈમેજ, અથવા ફક્ત ટેક્સ્ટ સાથે પણ જાહેરાત બનાવી શકો છો. વિડિઓ જાહેરાત માટે YouTube લીંક "Link" માં મૂકો.
         <br />
         <span className="text-gray-400">
-          (All fields are optional — you can publish an ad with just a title, just an image, just a video, or just text.)
+          (All fields are optional — you can publish an ad with just a title, just an image, or just text. Video uploads are not supported; put a YouTube link in &quot;Link&quot; instead.)
         </span>
       </p>
 
@@ -93,12 +93,6 @@ export default function AdForm({ initial }: { initial?: AdFormValues }) {
         onUploaded={(url) => update("imageUrl", url)}
       />
 
-      <CloudinaryUploadButton
-        label="Video"
-        accept="video"
-        currentUrl={values.videoUrl}
-        onUploaded={(url) => update("videoUrl", url)}
-      />
 
       <div className="mb-4">
         <label className="block text-sm font-semibold text-gray-700 mb-1">Text</label>
