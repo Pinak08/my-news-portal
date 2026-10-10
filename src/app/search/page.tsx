@@ -13,6 +13,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 
+// Search results are never cached (every query is different), so keep
+// crawlers off this page — see robots.ts.
 export default async function SearchPage({ searchParams }: Props) {
   const { q = "" } = await searchParams;
   const query = q.trim();
