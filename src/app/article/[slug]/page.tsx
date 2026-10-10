@@ -106,19 +106,25 @@ export default async function ArticlePage({ params }: Props) {
           </h1>
 
           {/* Excerpt */}
-          <p className="text-lg text-gray-600 border-l-4 border-brand-blue pl-4 mb-5 italic">
-            {article.excerpt}
-          </p>
+          {article.excerpt && (
+            <p className="text-lg text-gray-600 border-l-4 border-brand-blue pl-4 mb-5 italic">
+              {article.excerpt}
+            </p>
+          )}
 
           {/* Meta */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-5 pb-4 border-b border-gray-200">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-brand-blue flex items-center justify-center text-white text-xs font-bold">
-                {article.author.charAt(0)}
-              </div>
-              <span className="font-semibold text-gray-700">{article.author}</span>
-            </div>
-            <span>·</span>
+            {article.author && (
+              <>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-brand-blue flex items-center justify-center text-white text-xs font-bold">
+                    {article.author.charAt(0)}
+                  </div>
+                  <span className="font-semibold text-gray-700">{article.author}</span>
+                </div>
+                <span>·</span>
+              </>
+            )}
             <span>{formatDate(article.publishedAt)}</span>
           </div>
 
