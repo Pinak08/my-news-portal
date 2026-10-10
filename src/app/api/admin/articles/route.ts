@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidAdminSession } from "@/lib/adminAuth";
-import { revalidatePath } from "next/cache";
+import { revalidateArticlePages } from "@/lib/revalidate";
 
 function slugify(title: string) {
   return title
@@ -99,9 +99,7 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Immediately refresh cached pages so the new article shows up right away
-  // instead of waiting for the 60-second background refresh.
-  revalidatePath("/", "layout");
+  revalidateArticlePages();
 
   return NextResponse.json({ article: data });
 }
