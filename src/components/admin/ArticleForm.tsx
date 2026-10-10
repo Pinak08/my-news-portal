@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CloudinaryMultiUploadButton from "@/components/CloudinaryMultiUploadButton";
-import { categories } from "@/lib/articles";
+import { categories } from "@/lib/categories";
 
 export interface ArticleFormValues {
   id?: number;
